@@ -8,20 +8,18 @@ public class PaintBucket : MonoBehaviour
     public Color curColor;
     public int colorCount;
 
-    // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         curColor = colorList[colorCount];
 
         //マウスポジション
         Vector3 pos = Input.mousePosition;
-        pos.z = 10.5f;
+        pos.z = 11.0f;
         var ray = Camera.main.ScreenToWorldPoint(pos);
         RaycastHit2D hit = Physics2D.Raycast(ray, -Vector2.up);
 
@@ -35,6 +33,11 @@ public class PaintBucket : MonoBehaviour
 
                 sp.color = curColor;
             }
+            //BGを変える
+            // if (hit.collider == null)
+            // {
+            //     Camera.main.backgroundColor = curColor;
+            // }
         }
     }
 
