@@ -15,6 +15,13 @@ public class PaintBucket : MonoBehaviour
 
     void Update()
     {
+        //マウスポジション取得、クリックでカラーを変更
+        ClickChangeColor();
+    }
+
+    //マウスポジション取得、クリックでカラーを変更
+    public void ClickChangeColor()
+    {
         curColor = colorList[colorCount];
 
         //マウスポジション
@@ -24,7 +31,7 @@ public class PaintBucket : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(ray, -Vector2.up);
 
         //クリックしたらカラーを変更
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
             if (hit.collider != null)
             {
@@ -33,11 +40,6 @@ public class PaintBucket : MonoBehaviour
 
                 sp.color = curColor;
             }
-            //BGを変える
-            // if (hit.collider == null)
-            // {
-            //     Camera.main.backgroundColor = curColor;
-            // }
         }
     }
 
