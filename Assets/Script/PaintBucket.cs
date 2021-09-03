@@ -19,20 +19,28 @@ public class PaintBucket : MonoBehaviour
     {
         curColor = colorList[colorCount];
 
+        //マウスポジション
         Vector3 pos = Input.mousePosition;
         pos.z = 10.0f;
         var ray = Camera.main.ScreenToWorldPoint(pos);
         RaycastHit2D hit = Physics2D.Raycast(ray, -Vector2.up);
 
+        //クリックしたらカラーを変更
         if (Input.GetMouseButtonDown(0))
         {
             if (hit.collider != null)
             {
                 SpriteRenderer sp = hit.collider.gameObject.GetComponent<SpriteRenderer>();
                 Debug.Log(hit.collider.name);
+
+                sp.color = curColor;
             }
         }
     }
 
-    
+    //カラー設定
+    public void paint(int colorCode)
+    {
+        colorCount = colorCode;
+    }
 }
