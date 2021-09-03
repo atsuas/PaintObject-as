@@ -8,9 +8,6 @@ public class PaintBucket : MonoBehaviour
     public Color curColor;
     public int colorCount;
 
-    //カーソル
-    public Texture2D cursor;
-
     void Start()
     {
         
@@ -36,14 +33,8 @@ public class PaintBucket : MonoBehaviour
         //クリックしたらカラーを変更
         if (Input.GetMouseButtonDown(0))
         {
-            //カーソルを表示
-            Cursor.SetCursor(cursor, new Vector2(cursor.width / 2.0f, cursor.height / 5.5f), CursorMode.Auto);
-
             if (hit.collider != null)
             {
-                //カーソルを消す
-                Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-                
                 SpriteRenderer sp = hit.collider.gameObject.GetComponent<SpriteRenderer>();
                 Debug.Log(hit.collider.name);
 
