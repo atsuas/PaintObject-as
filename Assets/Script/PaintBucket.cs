@@ -21,12 +21,12 @@ public class PaintBucket : MonoBehaviour
 
         //マウスポジション
         Vector3 pos = Input.mousePosition;
-        pos.z = 10.0f;
+        pos.z = 10.5f;
         var ray = Camera.main.ScreenToWorldPoint(pos);
         RaycastHit2D hit = Physics2D.Raycast(ray, -Vector2.up);
 
         //クリックしたらカラーを変更
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             if (hit.collider != null)
             {
