@@ -131,6 +131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 107192690}
   - component: {fileID: 107192689}
+  - component: {fileID: 107192691}
   m_Layer: 0
   m_Name: Frame
   m_TagString: Untagged
@@ -208,6 +209,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &107192691
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107192688}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: dbf3ec7a0815b408d9ea43cd3be5c07f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &123701117
 GameObject:
   m_ObjectHideFlags: 0
@@ -926,7 +946,7 @@ GameObject:
   - component: {fileID: 495401572}
   - component: {fileID: 495401571}
   m_Layer: 0
-  m_Name: Legitimate
+  m_Name: LegitimateFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1828,6 +1848,8 @@ MonoBehaviour:
   nextButton: {fileID: 2129639271}
   retryButton: {fileID: 578976415}
   colorsButton: {fileID: 2086258504}
+  leftAnimator: {fileID: 107192691}
+  rb2D: {fileID: 1033670810}
 --- !u!4 &1030525176
 Transform:
   m_ObjectHideFlags: 0
