@@ -15,11 +15,10 @@ public class PaintBucket : MonoBehaviour
     public GameObject retryButton;
     public GameObject colorsButton;
     public Animator leftAnimator;
-    public Rigidbody2D rb2D;
-
+    
     void Start()
     {
-        rb2D = GetComponent<Rigidbody2D>();
+        
     }
 
     void Update()
@@ -62,7 +61,6 @@ public class PaintBucket : MonoBehaviour
     public void DoneButton()
     {
         leftAnimator.SetBool("LeftAnimation", true);
-        rb2D.simulated = false;
         doneButton.SetActive(false);
         nextButton.SetActive(true);
         retryButton.SetActive(true);

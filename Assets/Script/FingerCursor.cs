@@ -30,7 +30,7 @@ public class FingerCursor : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     /// <summary>
     /// Colliderのカーソル
     /// </summary>
-    // カーソルが対象オブジェクトに入った時
+    /// カーソルが対象オブジェクトに入った時
     void OnMouseEnter()
     {
         //カーソルを表示
