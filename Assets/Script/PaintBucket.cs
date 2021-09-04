@@ -15,6 +15,7 @@ public class PaintBucket : MonoBehaviour
     public GameObject retryButton;
     public GameObject colorsButton;
     public Animator leftAnimator;
+    public Animator rightAnimator;
     
     void Start()
     {
@@ -61,6 +62,7 @@ public class PaintBucket : MonoBehaviour
     public void DoneButton()
     {
         leftAnimator.SetBool("LeftAnimation", true);
+        rightAnimator.SetBool("RightAnimation", true);
         doneButton.SetActive(false);
         nextButton.SetActive(true);
         retryButton.SetActive(true);

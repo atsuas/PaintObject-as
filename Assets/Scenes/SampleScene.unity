@@ -945,6 +945,7 @@ GameObject:
   m_Component:
   - component: {fileID: 495401572}
   - component: {fileID: 495401571}
+  - component: {fileID: 495401573}
   m_Layer: 0
   m_Name: LegitimateFrame
   m_TagString: Untagged
@@ -1022,6 +1023,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &495401573
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495401570}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 303557fe022174acdb1838c1553a61a0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &578976415
 GameObject:
   m_ObjectHideFlags: 0
@@ -1848,7 +1868,8 @@ MonoBehaviour:
   nextButton: {fileID: 2129639271}
   retryButton: {fileID: 578976415}
   colorsButton: {fileID: 2086258504}
-  leftAnimator: {fileID: 107192691}
+  leftAnimator: {fileID: 495401573}
+  rightAnimator: {fileID: 107192691}
 --- !u!4 &1030525176
 Transform:
   m_ObjectHideFlags: 0
