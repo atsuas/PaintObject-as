@@ -1827,6 +1827,7 @@ MonoBehaviour:
   doneButton: {fileID: 2041798038}
   nextButton: {fileID: 2129639271}
   retryButton: {fileID: 578976415}
+  colorsButton: {fileID: 2086258504}
 --- !u!4 &1030525176
 Transform:
   m_ObjectHideFlags: 0

@@ -13,6 +13,7 @@ public class PaintBucket : MonoBehaviour
     public GameObject doneButton;
     public GameObject nextButton;
     public GameObject retryButton;
+    public GameObject colorsButton;
 
     void Start()
     {
@@ -55,10 +56,12 @@ public class PaintBucket : MonoBehaviour
         colorCount = colorCode;
     }
 
+    //DoneButton押下時の処理
     public void DoneButton()
     {
         doneButton.SetActive(false);
         nextButton.SetActive(true);
         retryButton.SetActive(true);
+        colorsButton.SetActive(false);
     }
 }
