@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class PaintBucket : MonoBehaviour
 {
+    //カラー関連
     public Color[] colorList;
     public Color curColor;
     public int colorCount;
+
+    //DoneButton押下後
+    public GameObject doneButton;
+    public GameObject nextButton;
+    public GameObject retryButton;
 
     void Start()
     {
@@ -43,9 +49,16 @@ public class PaintBucket : MonoBehaviour
         }
     }
 
-    //カラー設定
+    //カラーボタンOnClick用の設定
     public void paint(int colorCode)
     {
         colorCount = colorCode;
+    }
+
+    public void DoneButton()
+    {
+        doneButton.SetActive(false);
+        nextButton.SetActive(true);
+        retryButton.SetActive(true);
     }
 }
