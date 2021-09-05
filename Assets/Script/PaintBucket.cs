@@ -16,6 +16,14 @@ public class PaintBucket : MonoBehaviour
     public GameObject colorsButton;
     public Animator leftAnimator;
     public Animator rightAnimator;
+
+    public GameObject l1Obj;
+    public GameObject l2Obj;
+    public GameObject l3Obj;
+    public GameObject l4Obj;
+    public GameObject l5Obj;
+    public GameObject l6Obj;
+
     
     void Start()
     {
@@ -31,6 +39,7 @@ public class PaintBucket : MonoBehaviour
     //マウスポジション取得、クリックでカラーを変更
     public void ClickChangeColor()
     {
+        //culColorはcolorCountの色ですよ
         curColor = colorList[colorCount];
 
         //マウスポジション
@@ -48,6 +57,12 @@ public class PaintBucket : MonoBehaviour
                 Debug.Log(hit.collider.name);
 
                 sp.color = curColor;
+
+                if (sp.color == sp.color)
+                {
+                    Debug.Log("黄色だよ");
+                }
+
             }
         }
     }
@@ -74,10 +89,9 @@ public class PaintBucket : MonoBehaviour
         }
     }
 
-    // public void isClear(int colorCode)
+    // public void isClear(Color[] curColor, int colorCount)
     // {
-    //     colorCount = colorCode;
-    //     if (this.colorCount == 1)
+    //     if (l1Obj.curColor == colorCount.0)
     //     {
     //         Debug.Log("黄色だよ");
     //     }
