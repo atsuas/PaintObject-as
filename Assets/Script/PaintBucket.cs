@@ -56,7 +56,32 @@ public class PaintBucket : MonoBehaviour
     public void paint(int colorCode)
     {
         colorCount = colorCode;
+        if (colorCount == 0)
+        {
+            Debug.Log("黄色だよ");
+        }
+        else if (colorCount == 1)
+        {
+            Debug.Log("青色だよ");
+        }
+        else if (colorCount == 2)
+        {
+            Debug.Log("ピンク色だよ");
+        }
+        else if (colorCount == 3)
+        {
+            Debug.Log("白色だよ");
+        }
     }
+
+    // public void isClear(int colorCode)
+    // {
+    //     colorCount = colorCode;
+    //     if (this.colorCount == 1)
+    //     {
+    //         Debug.Log("黄色だよ");
+    //     }
+    // }
 
     //DoneButton押下時の処理
     public void DoneButton()
