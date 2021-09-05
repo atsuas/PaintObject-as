@@ -68,4 +68,5 @@ public class PaintBucket : MonoBehaviour
         retryButton.SetActive(true);
         colorsButton.SetActive(false);
     }
+
 }
