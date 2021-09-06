@@ -553,7 +553,7 @@ GameObject:
   - component: {fileID: 346798837}
   m_Layer: 0
   m_Name: L4
-  m_TagString: Untagged
+  m_TagString: WhiteColor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -708,7 +708,7 @@ GameObject:
   - component: {fileID: 366955340}
   m_Layer: 0
   m_Name: L3
-  m_TagString: Untagged
+  m_TagString: WhiteColor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1618,7 +1618,7 @@ GameObject:
   - component: {fileID: 901703290}
   m_Layer: 5
   m_Name: WhiteButton
-  m_TagString: White
+  m_TagString: WhiteColor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1993,7 +1993,11 @@ MonoBehaviour:
   whiteObj:
   - {fileID: 2069880718}
   - {fileID: 238683755}
-  yellowColorTag: {fileID: 594937436}
+  ColorTag:
+  - {fileID: 594937436}
+  - {fileID: 1054804527}
+  - {fileID: 1718196965}
+  - {fileID: 901703285}
 --- !u!4 &1030525176
 Transform:
   m_ObjectHideFlags: 0
@@ -2023,7 +2027,7 @@ GameObject:
   - component: {fileID: 1033670812}
   m_Layer: 0
   m_Name: L1
-  m_TagString: Untagged
+  m_TagString: WhiteColor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2233,7 +2237,7 @@ GameObject:
   - component: {fileID: 1054804532}
   m_Layer: 5
   m_Name: BlueButton
-  m_TagString: Blue
+  m_TagString: BlueColor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2414,7 +2418,7 @@ GameObject:
   - component: {fileID: 1310758144}
   m_Layer: 0
   m_Name: L2
-  m_TagString: Untagged
+  m_TagString: WhiteColor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2649,7 +2653,7 @@ GameObject:
   - component: {fileID: 1472082523}
   m_Layer: 0
   m_Name: L5
-  m_TagString: Untagged
+  m_TagString: WhiteColor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2870,7 +2874,7 @@ GameObject:
   - component: {fileID: 1657779984}
   m_Layer: 0
   m_Name: L6
-  m_TagString: Untagged
+  m_TagString: WhiteColor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3035,7 +3039,7 @@ GameObject:
   - component: {fileID: 1718196970}
   m_Layer: 5
   m_Name: PinkButton
-  m_TagString: Pink
+  m_TagString: PinkColor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3213,7 +3217,7 @@ GameObject:
   - component: {fileID: 2028884899}
   m_Layer: 0
   m_Name: L1
-  m_TagString: Untagged
+  m_TagString: Yellow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

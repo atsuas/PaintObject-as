@@ -22,8 +22,8 @@ public class PaintBucket : MonoBehaviour
     public GameObject[] blueObj;
     public GameObject[] pinkObj;
     public GameObject[] whiteObj;
-    public GameObject yellowColorTag;
-    public GameObject BlueColorTag;
+
+    public GameObject[] ColorTag;
 
 
     // ゲームオブジェクトのタグを変更する
@@ -72,15 +72,31 @@ public class PaintBucket : MonoBehaviour
                 SpriteRenderer sp = hit.collider.gameObject.GetComponent<SpriteRenderer>();
                 Debug.Log(hit.collider.name);
 
+                //スプライトのカラーをColorListのColorCountの色にする
                 sp.color = curColor;
 
-                
-                    //コライダータグをYellowTagに変更
-                    hit.collider.tag = yellowColorTag.tag;
-                
-                
-                
-
+                //クリックでカラーTagを設定
+                if (curColor == colorList[0])
+                {
+                    //ヒットしたコライダーのタグをYellowColorTagに変更
+                    hit.collider.tag = ColorTag[0].tag;
+                }
+                else if (curColor == colorList[1])
+                {
+                    //Blue用
+                    hit.collider.tag = ColorTag[1].tag;
+                }
+                else if (curColor == colorList[2])
+                {
+                    //Pink用
+                    hit.collider.tag = ColorTag[2].tag;
+                }
+                else if (curColor == colorList[3])
+                {
+                    //White用
+                    hit.collider.tag = ColorTag[3].tag;
+                }
+                    
             }
         }
     }

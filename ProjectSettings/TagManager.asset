@@ -9,6 +9,9 @@ TagManager:
   - Pink
   - White
   - YellowColor
+  - BlueColor
+  - PinkColor
+  - WhiteColor
   layers:
   - Default
   - TransparentFX
