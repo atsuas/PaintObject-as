@@ -22,18 +22,22 @@ public class PaintBucket : MonoBehaviour
     public GameObject[] blueObj;
     public GameObject[] pinkObj;
     public GameObject[] whiteObj;
-    public GameObject frameObject;
+    // public GameObject frameObject;
 
-    // ゲームオブジェクトのタグを取得する
-    public void GetTag()
-    {
-        Debug.Log(frameObject.tag);
-    }
 
     // ゲームオブジェクトのタグを変更する
     public void SetTag(string newTag)
     {
-        frameObject.tag = newTag;
+        GameObject[] untag = GameObject.FindGameObjectsWithTag("Player");
+        Debug.Log(untag[0].name);
+        Debug.Log(untag[1].name);
+        Debug.Log(untag[2].name);
+        Debug.Log(untag[3].name);
+        Debug.Log(untag[4].name);
+        Debug.Log(untag[5].name);
+
+        
+        // frameObject.tag = newTag;
     }
     
     void Start()
