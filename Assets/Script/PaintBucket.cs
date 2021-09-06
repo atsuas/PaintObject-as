@@ -22,23 +22,23 @@ public class PaintBucket : MonoBehaviour
     public GameObject[] blueObj;
     public GameObject[] pinkObj;
     public GameObject[] whiteObj;
-    // public GameObject frameObject;
+    public GameObject yellowColorTag;
+    public GameObject BlueColorTag;
 
 
     // ゲームオブジェクトのタグを変更する
-    public void SetTag(string newTag)
-    {
-        GameObject[] untag = GameObject.FindGameObjectsWithTag("Player");
-        Debug.Log(untag[0].name);
-        Debug.Log(untag[1].name);
-        Debug.Log(untag[2].name);
-        Debug.Log(untag[3].name);
-        Debug.Log(untag[4].name);
-        Debug.Log(untag[5].name);
+    // public void SetTag(string newTag)
+    // {
+        // GameObject[] untag = GameObject.FindGameObjectsWithTag("Player");
+        // Debug.Log(untag[0].name);
+        // Debug.Log(untag[1].name);
+        // Debug.Log(untag[2].name);
+        // Debug.Log(untag[3].name);
+        // Debug.Log(untag[4].name);
+        // Debug.Log(untag[5].name);
 
-        
-        // frameObject.tag = newTag;
-    }
+    //     frameObject.tag = newTag;
+    // }
     
     void Start()
     {
@@ -74,10 +74,12 @@ public class PaintBucket : MonoBehaviour
 
                 sp.color = curColor;
 
-                if (sp.color == sp.color)
-                {
-                    Debug.Log("黄色だよ");
-                }
+                
+                    //コライダータグをYellowTagに変更
+                    hit.collider.tag = yellowColorTag.tag;
+                
+                
+                
 
             }
         }

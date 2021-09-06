@@ -553,7 +553,7 @@ GameObject:
   - component: {fileID: 346798837}
   m_Layer: 0
   m_Name: L4
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -708,7 +708,7 @@ GameObject:
   - component: {fileID: 366955340}
   m_Layer: 0
   m_Name: L3
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1262,7 +1262,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Yellow
+          m_StringArgument: YellowColor
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &594937439
@@ -1993,6 +1993,7 @@ MonoBehaviour:
   whiteObj:
   - {fileID: 2069880718}
   - {fileID: 238683755}
+  yellowColorTag: {fileID: 594937436}
 --- !u!4 &1030525176
 Transform:
   m_ObjectHideFlags: 0
@@ -2022,7 +2023,7 @@ GameObject:
   - component: {fileID: 1033670812}
   m_Layer: 0
   m_Name: L1
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2413,7 +2414,7 @@ GameObject:
   - component: {fileID: 1310758144}
   m_Layer: 0
   m_Name: L2
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2648,7 +2649,7 @@ GameObject:
   - component: {fileID: 1472082523}
   m_Layer: 0
   m_Name: L5
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2869,7 +2870,7 @@ GameObject:
   - component: {fileID: 1657779984}
   m_Layer: 0
   m_Name: L6
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3212,7 +3213,7 @@ GameObject:
   - component: {fileID: 2028884899}
   m_Layer: 0
   m_Name: L1
-  m_TagString: Yellow
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
