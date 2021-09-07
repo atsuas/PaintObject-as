@@ -1,38 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PaintBucket : MonoBehaviour
 {
     //カラー関連
+    [Header("カラー関連")]
     public Color[] colorList;
     public Color curColor;
     public int colorCount;
 
-    //DoneButton OnClick時
-    public GameObject doneButton;
-    public GameObject nextButton;
-    public GameObject retryButton;
-    public GameObject colorsButton;
-    public Animator leftAnimator;
-    public Animator rightAnimator;
-
-    //正当
-    public GameObject[] yellowObj;
-    public GameObject[] blueObj;
-    public GameObject[] pinkObj;
-    public GameObject[] whiteObj;
+    //正当カラー
+    [Header("正当カラー")]
+    [SerializeField]
+    private GameObject[] yellowObj;
+    [SerializeField]
+    private GameObject[] blueObj;
+    [SerializeField]
+    private GameObject[] pinkObj;
+    [SerializeField]
+    private GameObject[] whiteObj;
 
     //フレームのタグ設定用
+    [Header("フレームタグ設定")]
     public GameObject[] ColorTag;
 
-    //クリア判定用
-    public GameObject[] frameObjects;
-    public GameObject[] clearObjects;
-    public GameObject grayStars;
-    public GameObject[] goldStars;
-    public Animator[] goldStarSet;
-    
     
     void Start()
     {
@@ -44,6 +38,74 @@ public class PaintBucket : MonoBehaviour
     {
         //マウスポジション取得、クリックでカラーを変更
         ClickChangeColor();
+    }
+
+    /// <summary>
+    /// スタート時〜DoneButton押下までの処理
+    /// </summary>
+    
+    //正当フレームのカラー設定
+    public void LegitimateFrame()
+    {
+        //取得したオブジェクト達を配列に入れる
+        yellowObj = GameObject.FindGameObjectsWithTag("Yellow");
+
+        //配列の中身を１つずつ処理
+        //YellowObject用
+        foreach (GameObject obj in yellowObj)
+        {
+                //見付けたオブジェクトに付いているSpriteRendererを取得
+                Renderer renderer = obj.GetComponent<SpriteRenderer>();
+
+                Color color= renderer.material.color;
+                color.r = 245/255f; 
+                color.g = 194/255f; 
+                color.b = 73/255f; 
+                color.a = 255/255f;
+                renderer.material.color = color;
+        }
+        
+        //BlueObject用
+        blueObj = GameObject.FindGameObjectsWithTag("Blue");
+        foreach (GameObject obj in blueObj)
+        {
+                Renderer renderer = obj.GetComponent<SpriteRenderer>();
+
+                Color color= renderer.material.color;
+                color.r = 30/255f; 
+                color.g = 168/255f; 
+                color.b = 255/255f; 
+                color.a = 255/255f;
+                renderer.material.color = color;
+        }
+
+        //PinkObject用
+        pinkObj = GameObject.FindGameObjectsWithTag("Pink");
+        foreach (GameObject obj in pinkObj)
+        {
+                Renderer renderer = obj.GetComponent<SpriteRenderer>();
+
+                Color color= renderer.material.color;
+                color.r = 238/255f;
+                color.g = 64/255f;
+                color.b = 189/255f;
+                color.a = 255/255f;
+                renderer.material.color = color;
+        }
+
+        //WhiteObject用
+        whiteObj = GameObject.FindGameObjectsWithTag("White");
+        foreach (GameObject obj in whiteObj)
+        {
+                Renderer renderer = obj.GetComponent<SpriteRenderer>();
+
+                Color color= renderer.material.color;
+                color.r = 255/255f;
+                color.g = 255/255f;
+                color.b = 255/255f;
+                color.a = 255/255f;
+                renderer.material.color = color;
+        }
     }
 
     //マウスポジション取得、クリックでカラーを変更
@@ -90,7 +152,7 @@ public class PaintBucket : MonoBehaviour
                     //White用
                     hit.collider.tag = ColorTag[3].tag;
                 }
-                    
+
             }
         }
     }
@@ -117,8 +179,30 @@ public class PaintBucket : MonoBehaviour
         }
     }
 
+/// <summary>
+/// DoneButton押下後
+/// </summary>
+
+    //DoneButton OnClick時
+    [Header("DoneButton、OnClick用")]
+    public GameObject doneButton;
+    public GameObject nextButton;
+    public GameObject retryButton;
+    public GameObject colorsButton;
+    public Animator leftAnimator;
+    public Animator rightAnimator;
+
+    //クリア判定用
+    [Header("クリア判定用")]
+    public GameObject[] frameObjects;
+    public GameObject[] clearObjects;
+    public GameObject grayStars;
+    public GameObject[] goldStars;
+    public Animator[] goldStarSet;
+
+
     //DoneButton OnClick時の処理
-    public void DoneButton()
+    public void ClickDoneButton()
     {
         leftAnimator.SetBool("LeftAnimation", true);
         rightAnimator.SetBool("RightAnimation", true);
@@ -128,8 +212,20 @@ public class PaintBucket : MonoBehaviour
         colorsButton.SetActive(false);
         Invoke("SetGrayStars", 1.0f);
         
+        //クリア条件分岐
         IsClear();
-        
+    }
+
+    //RetryButton OnClick時の処理
+    public void ClickRetryButton()
+    {
+        SceneManager.LoadScene("Level1");
+    }
+
+    //NextButton OnClick時の処理
+    public void ClickNextButton()
+    {
+        SceneManager.LoadScene("Level2");
     }
 
     //クリア条件分岐
@@ -197,71 +293,6 @@ public class PaintBucket : MonoBehaviour
     {
         goldStars[2].SetActive(true);
         goldStarSet[2].SetBool("GoldStar3", true);
-    }
-
-
-    //正当フレームのカラー設定
-    public void LegitimateFrame()
-    {
-        //取得したオブジェクト達を配列に入れる
-        yellowObj = GameObject.FindGameObjectsWithTag("Yellow");
-
-        //配列の中身を１つずつ処理
-        //YellowObject用
-        foreach (GameObject obj in yellowObj)
-        {
-                //見付けたオブジェクトに付いているSpriteRendererを取得
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 245/255f; 
-                color.g = 194/255f; 
-                color.b = 73/255f; 
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
-        
-        //BlueObject用
-        blueObj = GameObject.FindGameObjectsWithTag("Blue");
-        foreach (GameObject obj in blueObj)
-        {
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 30/255f; 
-                color.g = 168/255f; 
-                color.b = 255/255f; 
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
-
-        //PinkObject用
-        pinkObj = GameObject.FindGameObjectsWithTag("Pink");
-        foreach (GameObject obj in pinkObj)
-        {
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 238/255f;
-                color.g = 64/255f;
-                color.b = 189/255f;
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
-
-        //WhiteObject用
-        whiteObj = GameObject.FindGameObjectsWithTag("White");
-        foreach (GameObject obj in whiteObj)
-        {
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 255/255f;
-                color.g = 255/255f;
-                color.b = 255/255f;
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
     }
 
 }
