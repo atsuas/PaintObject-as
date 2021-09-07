@@ -12,6 +12,7 @@ public class PaintBucket : MonoBehaviour
     public Color curColor;
     public int colorCount;
 
+    //セレクター表示
     public GameObject[] Selectors;
 
     //正当カラー
@@ -165,6 +166,7 @@ public class PaintBucket : MonoBehaviour
         colorCount = colorCode;
         if (colorCount == 0)
         {
+            //カラーボタンを押下時にセレクター表示
             Selectors[0].SetActive(true);
             Selectors[1].SetActive(false);
             Selectors[2].SetActive(false);
