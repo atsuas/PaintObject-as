@@ -33,21 +33,6 @@ public class PaintBucket : MonoBehaviour
     public GameObject[] goldStars;
     public Animator[] goldStarSet;
     
-
-
-    // ゲームオブジェクトのタグを変更する
-    // public void SetTag(string newTag)
-    // {
-        // GameObject[] untag = GameObject.FindGameObjectsWithTag("Player");
-        // Debug.Log(untag[0].name);
-        // Debug.Log(untag[1].name);
-        // Debug.Log(untag[2].name);
-        // Debug.Log(untag[3].name);
-        // Debug.Log(untag[4].name);
-        // Debug.Log(untag[5].name);
-
-    //     frameObject.tag = newTag;
-    // }
     
     void Start()
     {
@@ -132,14 +117,6 @@ public class PaintBucket : MonoBehaviour
         }
     }
 
-    // public void isClear(Color[] curColor, int colorCount)
-    // {
-    //     if (l1Obj.curColor == colorCount.0)
-    //     {
-    //         Debug.Log("黄色だよ");
-    //     }
-    // }
-
     //DoneButton OnClick時の処理
     public void DoneButton()
     {
@@ -149,8 +126,15 @@ public class PaintBucket : MonoBehaviour
         nextButton.SetActive(true);
         retryButton.SetActive(true);
         colorsButton.SetActive(false);
-        grayStars.SetActive(true);
+        Invoke("SetGrayStars", 1.0f);
+        
+        IsClear();
+        
+    }
 
+    //クリア条件分岐
+    public void IsClear()
+    {
         //クリアの処理
         if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
             frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
@@ -159,35 +143,60 @@ public class PaintBucket : MonoBehaviour
             frameObjects[4].CompareTag("BlueColor") == clearObjects[4].CompareTag("Blue") &&
             frameObjects[5].CompareTag("PinkColor") == clearObjects[5].CompareTag("Pink"))
         {
-            goldStars[0].SetActive(true);
-            goldStarSet[0].SetBool("GoldStar1", true);
-            goldStars[1].SetActive(true);
-            goldStarSet[1].SetBool("GoldStar1", true);
-            goldStars[2].SetActive(true);
-            goldStarSet[2].SetBool("GoldStar1", true);
+            Invoke("SetStar1", 2f);
+            Invoke("SetStar2", 2.5f);
+            Invoke("SetStar3", 3.0f);
             Debug.Log("クリアだよ");
         }
-        else if (true)
-        {
-            if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
+        //星2の処理
+        else if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
             frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
             frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
             frameObjects[5].CompareTag("PinkColor") == clearObjects[5].CompareTag("Pink"))
         {
-            goldStars[0].SetActive(true);
-            goldStarSet[0].SetBool("GoldStar1", true);
-            goldStars[1].SetActive(true);
-            goldStarSet[1].SetBool("GoldStar1", true);
-            Debug.Log("間違いだよ");
+            Invoke("SetStar1", 2f);
+            Invoke("SetStar2", 2.5f);
+            Debug.Log("星２だよ");
         }
+        //星1の処理
+        else if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
+            frameObjects[3].CompareTag("BlueColor") == clearObjects[3].CompareTag("Blue") &&
+            frameObjects[4].CompareTag("BlueColor") == clearObjects[4].CompareTag("Blue"))
+        {
+            Invoke("SetStar1", 2f);
+            Debug.Log("星１だよ");
+        }
+        //星０の処理
         else
         {
-            goldStars[0].SetActive(true);
-            goldStarSet[0].SetBool("GoldStar1", true);
-            Debug.Log("大間違いだよ");
+            Debug.Log("星０だよ");
         }
-        }
-        
+    }
+
+    //グレースターを表示する
+    public void SetGrayStars()
+    {
+        grayStars.SetActive(true);
+    }
+
+    //1つ目の星を表示
+    public void SetStar1()
+    {
+        goldStars[0].SetActive(true);
+        goldStarSet[0].SetBool("GoldStar1", true);
+    }
+
+    //2つ目の星を表示
+    public void SetStar2()
+    {
+        goldStars[1].SetActive(true);
+        goldStarSet[1].SetBool("GoldStar2", true);
+    }
+    //3つ目の星を表示
+    public void SetStar3()
+    {
+        goldStars[2].SetActive(true);
+        goldStarSet[2].SetBool("GoldStar3", true);
     }
 
 
