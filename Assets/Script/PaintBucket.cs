@@ -12,6 +12,8 @@ public class PaintBucket : MonoBehaviour
     public Color curColor;
     public int colorCount;
 
+    public GameObject[] Selectors;
+
     //正当カラー
     [Header("正当カラー")]
     [SerializeField]
@@ -163,18 +165,34 @@ public class PaintBucket : MonoBehaviour
         colorCount = colorCode;
         if (colorCount == 0)
         {
+            Selectors[0].SetActive(true);
+            Selectors[1].SetActive(false);
+            Selectors[2].SetActive(false);
+            Selectors[3].SetActive(false);
             Debug.Log("黄色だよ");
         }
         else if (colorCount == 1)
         {
+            Selectors[0].SetActive(false);
+            Selectors[1].SetActive(true);
+            Selectors[2].SetActive(false);
+            Selectors[3].SetActive(false);
             Debug.Log("青色だよ");
         }
         else if (colorCount == 2)
         {
+            Selectors[0].SetActive(false);
+            Selectors[1].SetActive(false);
+            Selectors[2].SetActive(true);
+            Selectors[3].SetActive(false);
             Debug.Log("ピンク色だよ");
         }
         else if (colorCount == 3)
         {
+            Selectors[0].SetActive(false);
+            Selectors[1].SetActive(false);
+            Selectors[2].SetActive(false);
+            Selectors[3].SetActive(true);
             Debug.Log("白色だよ");
         }
     }
