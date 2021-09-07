@@ -2462,7 +2462,10 @@ MonoBehaviour:
   - {fileID: 1793618316}
   - {fileID: 959028875}
   - {fileID: 191293618}
-  goldStarSet: {fileID: 1793618319}
+  goldStarSet:
+  - {fileID: 1793618319}
+  - {fileID: 959028878}
+  - {fileID: 191293621}
 --- !u!4 &1030525176
 Transform:
   m_ObjectHideFlags: 0

@@ -31,7 +31,7 @@ public class PaintBucket : MonoBehaviour
     public GameObject[] clearObjects;
     public GameObject grayStars;
     public GameObject[] goldStars;
-    public Animator goldStarSet;
+    public Animator[] goldStarSet;
     
 
 
@@ -160,13 +160,34 @@ public class PaintBucket : MonoBehaviour
             frameObjects[5].CompareTag("PinkColor") == clearObjects[5].CompareTag("Pink"))
         {
             goldStars[0].SetActive(true);
-            goldStarSet.SetBool("GoldStar1", true);
+            goldStarSet[0].SetBool("GoldStar1", true);
+            goldStars[1].SetActive(true);
+            goldStarSet[1].SetBool("GoldStar1", true);
+            goldStars[2].SetActive(true);
+            goldStarSet[2].SetBool("GoldStar1", true);
             Debug.Log("クリアだよ");
+        }
+        else if (true)
+        {
+            if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
+            frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
+            frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
+            frameObjects[5].CompareTag("PinkColor") == clearObjects[5].CompareTag("Pink"))
+        {
+            goldStars[0].SetActive(true);
+            goldStarSet[0].SetBool("GoldStar1", true);
+            goldStars[1].SetActive(true);
+            goldStarSet[1].SetBool("GoldStar1", true);
+            Debug.Log("間違いだよ");
         }
         else
         {
-            Debug.Log("間違いだよ");
+            goldStars[0].SetActive(true);
+            goldStarSet[0].SetBool("GoldStar1", true);
+            Debug.Log("大間違いだよ");
         }
+        }
+        
     }
 
 
