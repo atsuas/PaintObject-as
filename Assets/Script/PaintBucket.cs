@@ -23,7 +23,16 @@ public class PaintBucket : MonoBehaviour
     public GameObject[] pinkObj;
     public GameObject[] whiteObj;
 
+    //フレームのタグ設定用
     public GameObject[] ColorTag;
+
+    //クリア判定用
+    public GameObject[] frameObjects;
+    public GameObject[] clearObjects;
+    public GameObject grayStars;
+    public GameObject[] goldStars;
+    public Animator goldStarSet;
+    
 
 
     // ゲームオブジェクトのタグを変更する
@@ -140,6 +149,24 @@ public class PaintBucket : MonoBehaviour
         nextButton.SetActive(true);
         retryButton.SetActive(true);
         colorsButton.SetActive(false);
+        grayStars.SetActive(true);
+
+        //クリアの処理
+        if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
+            frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
+            frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
+            frameObjects[3].CompareTag("BlueColor") == clearObjects[3].CompareTag("Blue") &&
+            frameObjects[4].CompareTag("BlueColor") == clearObjects[4].CompareTag("Blue") &&
+            frameObjects[5].CompareTag("PinkColor") == clearObjects[5].CompareTag("Pink"))
+        {
+            goldStars[0].SetActive(true);
+            goldStarSet.SetBool("GoldStar1", true);
+            Debug.Log("クリアだよ");
+        }
+        else
+        {
+            Debug.Log("間違いだよ");
+        }
     }
 
 
