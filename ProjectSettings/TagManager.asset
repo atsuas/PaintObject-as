@@ -12,6 +12,12 @@ TagManager:
   - BlueColor
   - PinkColor
   - WhiteColor
+  - GreenColor
+  - RedColor
+  - BlackColor
+  - Green
+  - Red
+  - Black
   layers:
   - Default
   - TransparentFX
