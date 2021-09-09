@@ -322,6 +322,10 @@ public class PaintBucket : MonoBehaviour
         {
             Level10Clear();
         }
+        else if (SceneManager.GetActiveScene().name == "Level11")
+        {
+            Level11Clear();
+        }
 
     }
 
@@ -368,6 +372,10 @@ public class PaintBucket : MonoBehaviour
         {
             SceneManager.LoadScene("Level10");
         }
+        else if (SceneManager.GetActiveScene().name == "Level11")
+        {
+            SceneManager.LoadScene("Level11");
+        }
 
     }
 
@@ -413,6 +421,10 @@ public class PaintBucket : MonoBehaviour
         else if (SceneManager.GetActiveScene().name == "Level10")
         {
             SceneManager.LoadScene("Level11");
+        }
+        else if (SceneManager.GetActiveScene().name == "Level11")
+        {
+            SceneManager.LoadScene("Level1");
         }
 
     }
@@ -784,6 +796,46 @@ public class PaintBucket : MonoBehaviour
         }
         //星1の処理
         else if (frameObjects[2].CompareTag("YellowColor") == clearObjects[2].CompareTag("Yellow"))
+        {
+            Invoke("SetStar1", 2f);
+            Debug.Log("星１だよ");
+        }
+        //星０の処理
+        else
+        {
+            Debug.Log("星０だよ");
+        }
+    }
+
+    //Level11 クリア条件分岐
+    public void Level11Clear()
+    {
+        //クリアの処理
+        if (frameObjects[0].CompareTag("BlackColor") == clearObjects[0].CompareTag("Black") &&
+            frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
+            frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
+            frameObjects[3].CompareTag("BlackColor") == clearObjects[3].CompareTag("Black") &&
+            frameObjects[4].CompareTag("RedColor") == clearObjects[4].CompareTag("Red") &&
+            frameObjects[5].CompareTag("RedColor") == clearObjects[5].CompareTag("Red"))
+        {
+            Invoke("SetStar1", 2f);
+            Invoke("SetStar2", 2.5f);
+            Invoke("SetStar3", 3.0f);
+            Debug.Log("クリアだよ");
+        }
+        //星2の処理
+        else if (frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
+            frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
+            frameObjects[4].CompareTag("RedColor") == clearObjects[4].CompareTag("Red") &&
+            frameObjects[5].CompareTag("RedColor") == clearObjects[5].CompareTag("Red"))
+        {
+            Invoke("SetStar1", 2f);
+            Invoke("SetStar2", 2.5f);
+            Debug.Log("星２だよ");
+        }
+        //星1の処理
+        else if (frameObjects[4].CompareTag("RedColor") == clearObjects[4].CompareTag("Red") &&
+            frameObjects[5].CompareTag("RedColor") == clearObjects[5].CompareTag("Red"))
         {
             Invoke("SetStar1", 2f);
             Debug.Log("星１だよ");
