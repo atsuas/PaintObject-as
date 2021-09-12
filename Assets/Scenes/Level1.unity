@@ -2800,6 +2800,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed7d2c86e6a24389a6b6d366c215934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  image: {fileID: 1571103202}
   colorList:
   - {r: 0.9622642, g: 0.7624568, b: 0.28595585, a: 1}
   - {r: 0.11792451, g: 0.6607574, b: 1, a: 1}
@@ -4126,7 +4127,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 1
-  m_FillAmount: 0.56
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0

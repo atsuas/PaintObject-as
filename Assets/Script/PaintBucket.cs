@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class PaintBucket : MonoBehaviour
 {
+    public Image image;
+
     //カラー関連
     [Header("カラー関連")]
     public Color[] colorList;
@@ -48,6 +50,12 @@ public class PaintBucket : MonoBehaviour
     {
         //マウスポジション取得、クリックでカラーを変更
         ClickChangeColor();
+
+        if (Input.GetMouseButton(0))
+        {
+            image.fillAmount += Time.deltaTime;
+        }
+
     }
 
     /// <summary>
