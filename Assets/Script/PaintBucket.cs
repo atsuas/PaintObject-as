@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class PaintBucket : MonoBehaviour
 {
-    public Image image;
+    public Image l1Image;
+    public Image l2Image;
 
     //カラー関連
     [Header("カラー関連")]
@@ -39,6 +40,9 @@ public class PaintBucket : MonoBehaviour
     [Header("フレームタグ設定")]
     public GameObject[] ColorTag;
 
+    public Animator l1Animation;
+    public Animator l2Animation;
+
     
     void Start()
     {
@@ -51,10 +55,10 @@ public class PaintBucket : MonoBehaviour
         //マウスポジション取得、クリックでカラーを変更
         ClickChangeColor();
 
-        if (Input.GetMouseButton(0))
-        {
-            image.fillAmount += Time.deltaTime;
-        }
+        // if (Input.GetMouseButton(0))
+        // {
+        //     image.fillAmount += Time.deltaTime;
+        // }
 
     }
 
@@ -189,26 +193,40 @@ public class PaintBucket : MonoBehaviour
                 Debug.Log(hit.collider.name);
 
                 //スプライトのカラーをColorListのColorCountの色にする
-                sp.color = curColor;
+                // sp.color = curColor;
+
+                // image.fillAmount += Time.deltaTime;
 
                 //クリックでカラーTagを設定
                 if (curColor == colorList[0])
                 {
+                    l1Image.GetComponent<Image>().color = colorList[0];
+                    // l1Animation.SetBool("L1Animation", false);
+                    l1Animation.SetTrigger("L1Animation");
+
+
+                    // sp.color = l1Image.color;
                     //ヒットしたコライダーのタグをYellowColorTagに変更
                     hit.collider.tag = ColorTag[0].tag;
                 }
                 else if (curColor == colorList[1])
                 {
+                    l1Image.GetComponent<Image>().color = colorList[1];
+                    l1Animation.SetTrigger("L1Animation");
                     //Blue用
                     hit.collider.tag = ColorTag[1].tag;
                 }
                 else if (curColor == colorList[2])
                 {
+                    l1Image.GetComponent<Image>().color = colorList[2];
+                    l1Animation.SetTrigger("L1Animation");
                     //Pink用
                     hit.collider.tag = ColorTag[2].tag;
                 }
                 else if (curColor == colorList[3])
                 {
+                    l1Image.GetComponent<Image>().color = colorList[3];
+                    l1Animation.SetTrigger("L1Animation");
                     //White用
                     hit.collider.tag = ColorTag[3].tag;
                 }
