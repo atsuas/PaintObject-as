@@ -3430,7 +3430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb1d4681b2c8b48a982cad12193fa455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  l1Image: {fileID: 0}
+  l1Image: {fileID: 1147892399}
   l2Image: {fileID: 0}
   colorList:
   - {r: 0.9607843, g: 0.7607843, b: 0.28627452, a: 1}

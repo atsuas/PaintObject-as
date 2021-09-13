@@ -9,6 +9,10 @@ public class Test : MonoBehaviour
     public Image l1Image;
     public Image l2Image;
 
+    float timeAmt = 5;
+    float time;
+    public bool GaugeFlg;//追加
+
     //カラー関連
     [Header("カラー関連")]
     public Color[] colorList;
@@ -46,12 +50,27 @@ public class Test : MonoBehaviour
     {
         //正当フレームのカラー設定
         LegitimateFrame();
+
+        l1Image = l1Image.GetComponent<Image>();
+        time = timeAmt;
     }
 
     void Update()
     {
         //マウスポジション取得、クリックでカラーを変更
         ClickChangeColor();
+
+        if ((GaugeFlg) && time < 1)//変更
+        {
+            time += Time.deltaTime;
+            l1Image.fillAmount = time / timeAmt;
+        }
+
+        if (Input.GetMouseButtonDown(0))//追加
+        {
+            //追加
+            GaugeFlg = true;
+        }
 
         // if (Input.GetMouseButton(0))
         // {
@@ -191,7 +210,7 @@ public class Test : MonoBehaviour
                 Debug.Log(hit.collider.name);
 
                 //スプライトのカラーをColorListのColorCountの色にする
-                sp.color = curColor;
+                // sp.color = curColor;
 
                 // image.fillAmount += Time.deltaTime;
 
@@ -199,11 +218,34 @@ public class Test : MonoBehaviour
                 if (curColor == colorList[0])
                 {
                     // l1Image.GetComponent<Image>().color = colorList[0];
+
+
+                    
+                    // if (l1Image.fillAmount <= 1.0f)
+                    // {
+                    //     l1Image.fillAmount = 0.0f;
+                    //     while (l1Image.fillAmount < 1.0f)
+                    //     {
+                    //         ++l1Image.fillAmount;
+                    //     }
+                    // }
+                    
+                    // l1Image.fillAmount += i * Time.deltaTime;
+                    
+                    // if (second <= 8)
+                    // {
+                    //     // ゲージを毎秒0.125増やす
+                    //     l1Image.fillAmount += 0.125f * Time.deltaTime;
+            
+                    //     // 秒数をカウント
+                    //     second += Time.deltaTime;
+            
+                    // }
                     // l1Animation.SetBool("L1Animation", false);
                     // l1Animation.SetTrigger("L1Animation");
 
-
                     // sp.color = l1Image.color;
+
                     //ヒットしたコライダーのタグをYellowColorTagに変更
                     hit.collider.tag = ColorTag[0].tag;
                 }
