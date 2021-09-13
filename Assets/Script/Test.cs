@@ -39,6 +39,8 @@ public class Test : MonoBehaviour
     //フレームのタグ設定用
     [Header("フレームタグ設定")]
     public GameObject[] ColorTag;
+
+    // public Animator l1Animation;
     
     void Start()
     {

@@ -258,7 +258,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 91beaf564f8d74505aad094fa68246f1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -2456,8 +2456,6 @@ MonoBehaviour:
   - {fileID: 1054804527}
   - {fileID: 1718196965}
   - {fileID: 901703285}
-  l1Animation: {fileID: 0}
-  l2Animation: {fileID: 0}
   doneButton: {fileID: 2041798038}
   nextButton: {fileID: 2129639271}
   retryButton: {fileID: 578976415}
