@@ -3432,6 +3432,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   l1Image: {fileID: 1147892399}
   l2Image: {fileID: 0}
+  GaugeFlg: 0
   colorList:
   - {r: 0.9607843, g: 0.7607843, b: 0.28627452, a: 1}
   - {r: 0.11764706, g: 0.65882355, b: 1, a: 1}

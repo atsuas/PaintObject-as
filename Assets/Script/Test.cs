@@ -9,7 +9,7 @@ public class Test : MonoBehaviour
     public Image l1Image;
     public Image l2Image;
 
-    float timeAmt = 5;
+    float timeAmt = 0;
     float time;
     public bool GaugeFlg;//追加
 
@@ -63,14 +63,14 @@ public class Test : MonoBehaviour
         if ((GaugeFlg) && time < 1)//変更
         {
             time += Time.deltaTime;
-            l1Image.fillAmount = time / timeAmt;
+            l1Image.fillAmount = time * 1;
         }
 
-        if (Input.GetMouseButtonDown(0))//追加
-        {
-            //追加
-            GaugeFlg = true;
-        }
+        // if (Input.GetMouseButtonDown(0))//追加
+        // {
+        //     //追加
+        //     GaugeFlg = true;
+        // }
 
         // if (Input.GetMouseButton(0))
         // {
@@ -217,9 +217,19 @@ public class Test : MonoBehaviour
                 //クリックでカラーTagを設定
                 if (curColor == colorList[0])
                 {
-                    // l1Image.GetComponent<Image>().color = colorList[0];
-
-
+                    l1Image.GetComponent<Image>().color = colorList[0];
+                    // l1Image = l1Image.GetComponent<Image>();
+                    // time = timeAmt;
+                    
+                    // if ((GaugeFlg) && time < 1)
+                    // {
+                    //     for (float i = 0; i < 1; i++)
+                    //     {
+                    //         time += Time.deltaTime;
+                    //         l1Image.fillAmount = time * i;
+                    //     }
+                    // }
+                    GaugeFlg = true;
                     
                     // if (l1Image.fillAmount <= 1.0f)
                     // {
@@ -251,21 +261,24 @@ public class Test : MonoBehaviour
                 }
                 else if (curColor == colorList[1])
                 {
-                    // l1Image.GetComponent<Image>().color = colorList[1];
+                    l1Image.GetComponent<Image>().color = colorList[1];
+                    GaugeFlg = true;
                     // l1Animation.SetTrigger("L1Animation");
                     //Blue用
                     hit.collider.tag = ColorTag[1].tag;
                 }
                 else if (curColor == colorList[2])
                 {
-                    // l1Image.GetComponent<Image>().color = colorList[2];
+                    l1Image.GetComponent<Image>().color = colorList[2];
+                    GaugeFlg = true;
                     // l1Animation.SetTrigger("L1Animation");
                     //Pink用
                     hit.collider.tag = ColorTag[2].tag;
                 }
                 else if (curColor == colorList[3])
                 {
-                    // l1Image.GetComponent<Image>().color = colorList[3];
+                    l1Image.GetComponent<Image>().color = colorList[3];
+                    GaugeFlg = true;
                     // l1Animation.SetTrigger("L1Animation");
                     //White用
                     hit.collider.tag = ColorTag[3].tag;
