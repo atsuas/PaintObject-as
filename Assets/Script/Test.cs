@@ -50,7 +50,7 @@ public class Test : MonoBehaviour
     }
 
     ///<summary>
-    ///正当レイヤーの準備
+    ///正答レイヤーの準備
     ///<summary>
     void SetupCorrectLayers()
     {
@@ -68,5 +68,20 @@ public class Test : MonoBehaviour
         frameClone.GetComponent<SpriteRenderer>().sortingOrder = frameClone.GetComponent<SpriteRenderer>().sortingOrder-1000;
     }
 
-    
+    ///<summary>
+    ///回答レイヤーの準備
+    ///<summary>
+    void SetupAnswerLayers()
+    {
+        foreach (Transform layer in answerLayers)
+        {
+            layer.gameObject.AddComponent<PolygonCollider2D>();
+            layer.gameObject.AddComponent<ObserVableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => ChangeColor(layer.gameObject, _.position)).AddTo(this);
+
+            correctColors.Add(layer.gameObject.GetComponent<SpriteRenderer>().color);
+
+            layer.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+    }
+
 }
