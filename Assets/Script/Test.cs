@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; //Linp使用時
 using UnityEngine;
 using UnityEngine.UI;
-using UniRx;
-using Cysharp.Threading.Tasks;
+using UniRx; //UniRx使用時
+using Cysharp.Threading.Tasks; //UniTask使用時
 using UniRx.Triggers;
 
 public class Test : MonoBehaviour
@@ -39,6 +39,34 @@ public class Test : MonoBehaviour
 
     // プライベートプロパティ
     Subject<bool> OnFinish { get; } = new Subject<bool>();
-    
 
+    ///<summary>
+    ///初回動作開始時
+    ///<summary>
+    void Start()
+    {
+        // 正当レイヤーの準備
+        // SetupCorrectLayers();
+    }
+
+    ///<summary>
+    ///正当レイヤーの準備
+    ///<summary>
+    void SetupCorrectLayers()
+    {
+        // 正当例を作成
+        foreach (Transform layer in answerLayers)
+        {
+            GameObject layerClone = Instantiate(layer.gameObject);
+            layerClone.transform.SetParent(correctLayers, false);
+            layerClone.GetComponent<SpriteRenderer>().sortingOrder = layerClone.GetComponent<SpriteRenderer>().sortingOrder - 1000;
+        }
+
+        // フレームをコピー
+        GameObject frameClone = Instantiate(answerFrame);
+        frameClone.transform.SetParent(correctFrame, false);
+        frameClone.GetComponent<SpriteRenderer>().sortingOrder = frameClone.GetComponent<SpriteRenderer>().sortingOrder-1000;
+    }
+
+    
 }
