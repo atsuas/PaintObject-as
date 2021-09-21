@@ -27,7 +27,7 @@ public class Test : MonoBehaviour
 
     // ステージのオブジェクト
     Transform stage = default;
-    public Transform answerLayers = default;
+    Transform answerLayers = default;
     GameObject answerFrame = default;
     GameObject avPlayer = default;
 
@@ -40,6 +40,20 @@ public class Test : MonoBehaviour
     // プライベートプロパティ
     Subject<bool> OnFinish { get; } = new Subject<bool>();
 
+    /// <summary>
+    /// 初期化時
+    /// </summary>
+    void Awake()
+    {
+        // タグでオブジェクトを検索
+        stage = GameObject.FindWithTag("Stage").transform;
+
+        // ステージを構成するオブジェクトを設定
+        answerFrame = stage.transform.Find("Answer/Frame").gameObject;
+        answerLayers = stage.transform.Find("Answer/Layers").transform;
+
+    }
+
     ///<summary>
     ///初回動作開始時
     ///<summary>
@@ -49,7 +63,7 @@ public class Test : MonoBehaviour
         SetupCorrectLayers();
 
         //回答レイヤーの準備
-        SetupAnswerLayers();
+        // SetupAnswerLayers();
     }
 
     ///<summary>
