@@ -27,7 +27,7 @@ public class Test : MonoBehaviour
 
     // ステージのオブジェクト
     Transform stage = default;
-    Transform answerLayers = default;
+    public Transform answerLayers = default;
     GameObject answerFrame = default;
     GameObject avPlayer = default;
 
@@ -46,7 +46,10 @@ public class Test : MonoBehaviour
     void Start()
     {
         // 正当レイヤーの準備
-        // SetupCorrectLayers();
+        SetupCorrectLayers();
+
+        //回答レイヤーの準備
+        SetupAnswerLayers();
     }
 
     ///<summary>
@@ -57,6 +60,7 @@ public class Test : MonoBehaviour
         // 正当例を作成
         foreach (Transform layer in answerLayers)
         {
+            // レイヤーをコピー
             GameObject layerClone = Instantiate(layer.gameObject);
             layerClone.transform.SetParent(correctLayers, false);
             layerClone.GetComponent<SpriteRenderer>().sortingOrder = layerClone.GetComponent<SpriteRenderer>().sortingOrder - 1000;
@@ -73,13 +77,17 @@ public class Test : MonoBehaviour
     ///<summary>
     void SetupAnswerLayers()
     {
+        // レイヤーをセットアップ
         foreach (Transform layer in answerLayers)
         {
+            // タッチ判定を追加
             layer.gameObject.AddComponent<PolygonCollider2D>();
             layer.gameObject.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => ChangeColor(layer.gameObject, _.position)).AddTo(this);
 
+            // 正解のカラーリストに追加
             correctColors.Add(layer.gameObject.GetComponent<SpriteRenderer>().color);
 
+            // レイヤーのカラーを初期化
             layer.GetComponent<SpriteRenderer>().color = Color.white;
         }
     }
