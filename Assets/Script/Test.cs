@@ -76,7 +76,7 @@ public class Test : MonoBehaviour
         foreach (Transform layer in answerLayers)
         {
             layer.gameObject.AddComponent<PolygonCollider2D>();
-            layer.gameObject.AddComponent<ObserVableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => ChangeColor(layer.gameObject, _.position)).AddTo(this);
+            layer.gameObject.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => ChangeColor(layer.gameObject, _.position)).AddTo(this);
 
             correctColors.Add(layer.gameObject.GetComponent<SpriteRenderer>().color);
 
@@ -84,4 +84,17 @@ public class Test : MonoBehaviour
         }
     }
 
+
+    ///<summary>
+    ///レイヤーのカラーを変更
+    ///<summary>
+    void ChangeColor(GameObject layer, Vector3 touchPosition)
+    {
+        //前のカラーを保持
+        Color beforeColor = layer.GetComponent<SpriteRenderer>().color;
+
+        //カラーを変更
+        layer.GetComponent<SpriteRenderer>().color = selectedColor;
+
+    }
 }
