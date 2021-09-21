@@ -51,7 +51,6 @@ public class Test : MonoBehaviour
         // ステージを構成するオブジェクトを設定
         answerFrame = stage.transform.Find("Answer/Frame").gameObject;
         answerLayers = stage.transform.Find("Answer/Layers").transform;
-
     }
 
     ///<summary>
@@ -60,7 +59,7 @@ public class Test : MonoBehaviour
     void Start()
     {
         // 正当レイヤーの準備
-        SetupCorrectLayers();
+        // SetupCorrectLayers();
 
         //回答レイヤーの準備
         // SetupAnswerLayers();
