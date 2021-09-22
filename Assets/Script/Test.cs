@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx; //UniRx使用時
 using Cysharp.Threading.Tasks; //UniTask使用時
+using DG.Tweening;
 using UniRx.Triggers;
 
 public class Test : MonoBehaviour
@@ -15,7 +16,7 @@ public class Test : MonoBehaviour
     [SerializeField] Transform correctFrame = default;
     [SerializeField] Transform colorPalette = default;
     [SerializeField] GameObject colorPicker = default;
-    [SerializeField] GameObject colorSelecter = default;
+    [SerializeField] GameObject colorSelector = default;
     [SerializeField] GameObject mask = default;
     [SerializeField] GameObject doneButton = default;
     [SerializeField] GameObject compareButton = default;
@@ -170,7 +171,6 @@ public class Test : MonoBehaviour
         SelectColor(colorPalette.GetChild(0).gameObject);
     }
 
-
     ///<summary>
     ///レイヤーのカラーを変更
     ///<summary>
@@ -181,6 +181,17 @@ public class Test : MonoBehaviour
 
         //カラーを変更
         layer.GetComponent<SpriteRenderer>().color = selectedColor;
+    }
 
+    /// <summary>
+    /// カラーパレットの選択カラーを変更
+    /// </summary>
+    void SelectColor(GameObject colorPicekr)
+    {
+        // 選択カラーを変更
+        selectedColor = colorPicekr.GetComponent<SpriteRenderer>().color;
+
+        // セレクターを移動
+        colorSelector.transform.DOMove(colorPicker.transform.position, .5f).SetEase(Ease.OutExpo);
     }
 }
