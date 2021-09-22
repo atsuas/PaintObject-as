@@ -66,7 +66,7 @@ public class Test : MonoBehaviour
         SetupAnswerLayers();
 
         // カラーパレットの準備
-        // SetupColorPallet();
+        SetupColorPallet();
     }
 
     ///<summary>
@@ -186,10 +186,10 @@ public class Test : MonoBehaviour
     /// <summary>
     /// カラーパレットの選択カラーを変更
     /// </summary>
-    void SelectColor(GameObject colorPicekr)
+    void SelectColor(GameObject colorPicker)
     {
         // 選択カラーを変更
-        selectedColor = colorPicekr.GetComponent<SpriteRenderer>().color;
+        selectedColor = colorPicker.GetComponent<SpriteRenderer>().color;
 
         // セレクターを移動
         colorSelector.transform.DOMove(colorPicker.transform.position, .5f).SetEase(Ease.OutExpo);
