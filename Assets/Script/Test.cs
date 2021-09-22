@@ -59,10 +59,13 @@ public class Test : MonoBehaviour
     void Start()
     {
         // 正当レイヤーの準備
-        // SetupCorrectLayers();
+        SetupCorrectLayers();
 
         //回答レイヤーの準備
-        // SetupAnswerLayers();
+        SetupAnswerLayers();
+
+        // カラーパレットの準備
+        // SetupColorPallet();
     }
 
     ///<summary>
@@ -103,6 +106,68 @@ public class Test : MonoBehaviour
             // レイヤーのカラーを初期化
             layer.GetComponent<SpriteRenderer>().color = Color.white;
         }
+    }
+
+    /// <summary>
+    /// カラーパレットの作成
+    /// </summary>
+    void SetupColorPallet()
+    {
+        // 文字列型の使用カラーリスト
+        List<string> stageColors = new List<string>();
+
+        // デフォルトのカラーを保持
+        Color defaultColor = colorPicker.GetComponent<SpriteRenderer>().color;
+
+        // 使用カラーをリストに追加
+        foreach (Color color in correctColors)
+        {
+            // デフォルトのカラーと同じでなければ追加
+            if (color != defaultColor)
+            {
+                // 文字列でカラーリストに追加
+                string htmlColor = "#" + ColorUtility.ToHtmlStringRGB(color);
+                stageColors.Add(htmlColor);
+            }
+        }
+
+        // 使用カラーの重複を削除
+        stageColors = stageColors.Distinct().ToList();
+
+        // カラー型の使用カラーリストを作成
+        List<Color> palletColors = new List<Color>();
+        foreach (string htmlColor in stageColors)
+        {
+            Color color = default(Color);
+            if (ColorUtility.TryParseHtmlString(htmlColor, out color)) 
+            {
+                palletColors.Add(color);
+            }
+        }
+
+        // デフォルトのカラーボタンからカラーパレットを作成
+        for (int i = 0; i < palletColors.Count; i++)
+        {
+            // デフォルトのボタンをコピー
+            GameObject newColorPicker = Instantiate(colorPicker, transform.position, Quaternion.identity);
+            newColorPicker.transform.SetParent(colorPalette, false);
+            newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
+            newColorPicker.AddComponent<PolygonCollider2D>();
+            newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
+        }
+
+        // デフォルトのカラーボタンにカラーパレットの設定
+        colorPicker.AddComponent<PolygonCollider2D>();
+        colorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(colorPicker)).AddTo(this);
+
+        // デフォルトカラーをパレットの最後尾に変更
+        colorPicker.transform.SetAsLastSibling();
+
+        // キャンバスを強制更新
+        Canvas.ForceUpdateCanvases();
+
+        // 初期カラーを選択
+        SelectColor(colorPalette.GetChild(0).gameObject);
     }
 
 
