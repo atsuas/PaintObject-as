@@ -5,9 +5,12 @@ using System.Linq; //Linp使用時
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx; //UniRx使用時
+// using UniRx.Async;
 using Cysharp.Threading.Tasks; //UniTask使用時
 using DG.Tweening;
 using UniRx.Triggers;
+// using App.Services;
+using UnityEngine.EventSystems;
 
 public class Test : MonoBehaviour
 {
