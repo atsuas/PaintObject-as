@@ -183,8 +183,44 @@ public class Test : MonoBehaviour
         layer.GetComponent<SpriteRenderer>().color = selectedColor;
 
         // カラー変更アニメーション
-        // ShowChangeColorAnimation(layer, touchPosition, beforeColor);
+        ShowChangeColorAnimation(layer, touchPosition, beforeColor);
+    }
 
+    ///<summary>
+    /// レイヤーのカラー変更アニメーション
+    ///<summary>
+    void ShowChangeColorAnimation(GameObject layer, Vector3 touchPosition, Color beforeColor)
+    {
+        // タップ位置を計算
+        float touchPositionX = (touchPosition.x / 10) - ((Screen.width / 10) / 2);
+        float touchPositionY = (touchPosition.y / 10) - ((Screen.height / 10) / 2);
+
+        // レイヤーをクローン
+        GameObject layerClone = Instantiate(layer, transform.position, Quaternion.identity);
+        layerClone.transform.SetParent(answerLayers);
+        layerClone.transform.position = layer.transform.position;
+        layerClone.transform.localScale = new Vector3(1, 1, 1);
+        layerClone.GetComponent<SpriteRenderer>().color = beforeColor;
+        layerClone.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
+        layerClone.GetComponent<SpriteRenderer>().sortingOrder = layer.GetComponent<SpriteRenderer>().sortingOrder + 1;
+
+        // マスクをクローン
+        GameObject maskClone = Instantiate(mask, transform.position, Quaternion.identity);
+        maskClone.transform.SetParent(answerLayers);
+        maskClone.transform.localScale = new Vector3(0.01f, 0.01f, 0); // 小さくしておく
+        maskClone.transform.position = new Vector3(touchPositionX, touchPositionY, 0);
+        maskClone.GetComponent<SpriteMask>().renderingLayerMask = layerClone.GetComponent<SpriteRenderer>().renderingLayerMask;
+
+        // アニメーション時間
+        float duration = 0.7f;
+
+        // スケールアニメーション
+        float scale = (layer.GetComponent<RectTransform>().sizeDelta.x / 100) * 2.0f; // レイヤーサイズの2倍
+        maskClone.transform.DOScale(scale, duration);
+
+        // レイヤーとマスクを削除
+        Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ => Destroy(layerClone));
+        Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ => Destroy(maskClone));
     }
 
     /// <summary>
