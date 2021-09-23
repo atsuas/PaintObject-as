@@ -176,11 +176,15 @@ public class Test : MonoBehaviour
     ///<summary>
     void ChangeColor(GameObject layer, Vector3 touchPosition)
     {
-        //前のカラーを保持
+        // 前のカラーを保持
         Color beforeColor = layer.GetComponent<SpriteRenderer>().color;
 
-        //カラーを変更
+        // カラーを変更
         layer.GetComponent<SpriteRenderer>().color = selectedColor;
+
+        // カラー変更アニメーション
+        // ShowChangeColorAnimation(layer, touchPosition, beforeColor);
+
     }
 
     /// <summary>
