@@ -168,27 +168,28 @@ public class Test : MonoBehaviour
             //このスクリプトを入れたオブジェクトの位置
             // pos = transform.position;
 
-            //Z軸にrowの数だけ並べる
+            //X軸にrowの数だけ並べる
             for (int ri = 0; ri < row; ri++)
             {
-                //X軸にcolumnの数だけ並べる
-                for (int ci = 0; ci < column; ci++)
-                {
-                    // デフォルトのボタンをコピー
-                    GameObject newColorPicker = Instantiate(colorPicker, Vector2.zero, Quaternion.identity);
+                Vector3 pickerPosition = new Vector3(0, 0, 0);
 
-                    newColorPicker.transform.SetParent(colorPalette, false);
+                
+                // デフォルトのボタンをコピー
+                GameObject newColorPicker = Instantiate(colorPicker, pickerPosition, Quaternion.identity);
 
-                    // ゲームオブジェクトの位置を設定します。
-                    float xPos = xOffset * ci;
-                    float yPos = yOffset * ri;
-                    newColorPicker.transform.localPosition = new Vector3(10, 0);
+                pickerPosition.x += colorPicker.transform.localScale.x;
 
-                    newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
-                    newColorPicker.AddComponent<PolygonCollider2D>();
-                    newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
+                // ゲームオブジェクトの位置を設定します。
+                // float xPos = xOffset * ci;
+                // float yPos = yOffset * ri;
+                // newColorPicker.transform.localPosition = new Vector2(0, 0);
 
-                }
+                newColorPicker.transform.SetParent(colorPalette, false);
+
+                newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
+                newColorPicker.AddComponent<PolygonCollider2D>();
+                newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
+
             }
 
             // newColorPicker.transform.SetParent(colorPalette, false);
