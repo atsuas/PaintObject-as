@@ -113,16 +113,13 @@ public class Test : MonoBehaviour
 
 
     //高さ
-    public float high;
+    public float xOffset;
     //オブジェクト間の幅
-    public float width;
+    public float yOffset;
     //上から見て縦、Z軸のオブジェクトの量
-    public int vertical;
+    public int row;
     //上から見て横、X軸のオブジェクトの量
-    public int horizontal;
-
-    //位置を入れる変数
-    Vector3 pos;
+    public int column;
 
 
     /// <summary>
@@ -166,36 +163,38 @@ public class Test : MonoBehaviour
         for (int i = 0; i < palletColors.Count; i++)
         {
             // デフォルトのボタンをコピー
-            GameObject newColorPicker = Instantiate(colorPicker, transform.position, Quaternion.identity);
+            // GameObject newColorPicker = Instantiate(colorPicker, transform.position, Quaternion.identity);
 
             //このスクリプトを入れたオブジェクトの位置
-            pos = transform.position;
+            // pos = transform.position;
 
-            //Z軸にverticalの数だけ並べる
-            for (int vi = 0; vi < vertical; vi++)
+            //Z軸にrowの数だけ並べる
+            for (int ri = 0; ri < row; ri++)
             {
-                //X軸にhorizontalの数だけ並べる
-                for (int hi = 0; hi < horizontal; hi++)
+                //X軸にcolumnの数だけ並べる
+                for (int ci = 0; ci < column; ci++)
                 {
-                    //PrefabのCubeを生成する
-                    GameObject copy = Instantiate(colorPicker,
-                        //生成したものを配置する位置
-                        new Vector3(
-                            //X軸
-                            pos.x + horizontal * width / 2 - hi * width - width / 2,
-                            //Y軸
-                            high,
-                            //Z軸
-                            pos.z + vertical * width / 2 - vi * width - width / 2
-                        //Quaternion.identityは無回転を指定する
-                        ), Quaternion.identity);
+                    // デフォルトのボタンをコピー
+                    GameObject newColorPicker = Instantiate(colorPicker, Vector2.zero, Quaternion.identity);
+
+                    newColorPicker.transform.SetParent(colorPalette, false);
+
+                    // ゲームオブジェクトの位置を設定します。
+                    float xPos = xOffset * ci;
+                    float yPos = yOffset * ri;
+                    newColorPicker.transform.localPosition = new Vector3(10, 0);
+
+                    newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
+                    newColorPicker.AddComponent<PolygonCollider2D>();
+                    newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
+
                 }
             }
 
-            newColorPicker.transform.SetParent(colorPalette, false);
-            newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
-            newColorPicker.AddComponent<PolygonCollider2D>();
-            newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
+            // newColorPicker.transform.SetParent(colorPalette, false);
+            // newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
+            // newColorPicker.AddComponent<PolygonCollider2D>();
+            // newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
         }
 
         // デフォルトのカラーボタンにカラーパレットの設定

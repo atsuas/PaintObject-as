@@ -1207,10 +1207,10 @@ MonoBehaviour:
   starBox: {fileID: 0}
   scanLightPrefab: {fileID: 0}
   paperShowerPrefab: {fileID: 0}
-  high: 1
-  width: 1
-  vertical: 1
-  horizontal: 1
+  xOffset: 1
+  yOffset: 1
+  row: 1
+  column: 1
 --- !u!1 &1257450344
 GameObject:
   m_ObjectHideFlags: 0
