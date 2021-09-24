@@ -111,6 +111,20 @@ public class Test : MonoBehaviour
         }
     }
 
+
+    //高さ
+    public float high;
+    //オブジェクト間の幅
+    public float width;
+    //上から見て縦、Z軸のオブジェクトの量
+    public int vertical;
+    //上から見て横、X軸のオブジェクトの量
+    public int horizontal;
+
+    //位置を入れる変数
+    Vector3 pos;
+
+
     /// <summary>
     /// カラーパレットの作成
     /// </summary>
@@ -153,6 +167,31 @@ public class Test : MonoBehaviour
         {
             // デフォルトのボタンをコピー
             GameObject newColorPicker = Instantiate(colorPicker, transform.position, Quaternion.identity);
+
+            //このスクリプトを入れたオブジェクトの位置
+            pos = transform.position;
+
+            //Z軸にverticalの数だけ並べる
+            for (int vi = 0; vi < vertical; vi++)
+            {
+                //X軸にhorizontalの数だけ並べる
+                for (int hi = 0; hi < horizontal; hi++)
+                {
+                    //PrefabのCubeを生成する
+                    GameObject copy = Instantiate(colorPicker,
+                        //生成したものを配置する位置
+                        new Vector3(
+                            //X軸
+                            pos.x + horizontal * width / 2 - hi * width - width / 2,
+                            //Y軸
+                            high,
+                            //Z軸
+                            pos.z + vertical * width / 2 - vi * width - width / 2
+                        //Quaternion.identityは無回転を指定する
+                        ), Quaternion.identity);
+                }
+            }
+
             newColorPicker.transform.SetParent(colorPalette, false);
             newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
             newColorPicker.AddComponent<PolygonCollider2D>();

@@ -830,10 +830,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1028933694}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.1424, y: 1.1424, z: 1.1424}
+  m_LocalPosition: {x: 27.2, y: 0, z: 0}
+  m_LocalScale: {x: 9.1392, y: 9.1392, z: 9.1392}
   m_Children: []
-  m_Father: {fileID: 1980270408}
+  m_Father: {fileID: 1116744116}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1028933696
@@ -1096,6 +1096,7 @@ Transform:
   m_LocalPosition: {x: -15.8, y: -25.4, z: -719.9998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1028933695}
   - {fileID: 1980270408}
   m_Father: {fileID: 2045585023}
   m_RootOrder: 0
@@ -1206,6 +1207,10 @@ MonoBehaviour:
   starBox: {fileID: 0}
   scanLightPrefab: {fileID: 0}
   paperShowerPrefab: {fileID: 0}
+  high: 1
+  width: 1
+  vertical: 1
+  horizontal: 1
 --- !u!1 &1257450344
 GameObject:
   m_ObjectHideFlags: 0
@@ -2036,10 +2041,9 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27.2, y: 0, z: 0}
   m_LocalScale: {x: 8, y: 8, z: 8}
-  m_Children:
-  - {fileID: 1028933695}
+  m_Children: []
   m_Father: {fileID: 1116744116}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1980270409
 SpriteRenderer:
