@@ -160,36 +160,42 @@ public class Test : MonoBehaviour
         }
 
         // デフォルトのカラーボタンからカラーパレットを作成
-        for (int i = 0; i < palletColors.Count; i++)
+        for (int i = 0; i < 3; i++)
         {
             // デフォルトのボタンをコピー
             // GameObject newColorPicker = Instantiate(colorPicker, transform.position, Quaternion.identity);
 
-            //このスクリプトを入れたオブジェクトの位置
-            // pos = transform.position;
-
-            //X軸にrowの数だけ並べる
-            for (int ri = 0; ri < row; ri++)
+            if (i == 0)
             {
-                Vector3 pickerPosition = new Vector3(0, 0, 0);
-
-                
                 // デフォルトのボタンをコピー
-                GameObject newColorPicker = Instantiate(colorPicker, pickerPosition, Quaternion.identity);
-
-                pickerPosition.x += colorPicker.transform.localScale.x;
-
-                // ゲームオブジェクトの位置を設定します。
-                // float xPos = xOffset * ci;
-                // float yPos = yOffset * ri;
-                // newColorPicker.transform.localPosition = new Vector2(0, 0);
+                GameObject newColorPicker = Instantiate(colorPicker, transform.position, Quaternion.identity);
 
                 newColorPicker.transform.SetParent(colorPalette, false);
-
                 newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
                 newColorPicker.AddComponent<PolygonCollider2D>();
                 newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
+            }
+            
+            if (i == 1)
+            {
+                // デフォルトのボタンをコピー
+                GameObject newColorPicker = Instantiate(colorPicker, new Vector3(9.0f, 0.0f, 0.0f), Quaternion.identity);
 
+                newColorPicker.transform.SetParent(colorPalette, false);
+                newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
+                newColorPicker.AddComponent<PolygonCollider2D>();
+                newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
+            }
+
+            if (i == 2)
+            {
+                // デフォルトのボタンをコピー
+                GameObject newColorPicker = Instantiate(colorPicker, new Vector3(18.0f, 0.0f, 0.0f), Quaternion.identity);
+
+                newColorPicker.transform.SetParent(colorPalette, false);
+                newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
+                newColorPicker.AddComponent<PolygonCollider2D>();
+                newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
             }
 
             // newColorPicker.transform.SetParent(colorPalette, false);
