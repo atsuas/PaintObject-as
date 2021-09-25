@@ -160,7 +160,7 @@ public class Test : MonoBehaviour
         }
 
         // デフォルトのカラーボタンからカラーパレットを作成
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < palletColors.Count; i++)
         {
             // デフォルトのボタンをコピー
             // GameObject newColorPicker = Instantiate(colorPicker, transform.position, Quaternion.identity);
