@@ -162,46 +162,35 @@ public class Test : MonoBehaviour
         // デフォルトのカラーボタンからカラーパレットを作成
         for (int i = 0; i < palletColors.Count; i++)
         {
-            // デフォルトのボタンをコピー
-            // GameObject newColorPicker = Instantiate(colorPicker, transform.position, Quaternion.identity);
 
             if (i == 0)
             {
                 // デフォルトのボタンをコピー
                 GameObject newColorPicker = Instantiate(colorPicker, transform.position, Quaternion.identity);
-
                 newColorPicker.transform.SetParent(colorPalette, false);
                 newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
                 newColorPicker.AddComponent<PolygonCollider2D>();
                 newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
             }
-            
-            if (i == 1)
+            else if (i == 1)
             {
                 // デフォルトのボタンをコピー
                 GameObject newColorPicker = Instantiate(colorPicker, new Vector3(9.0f, 0.0f, 0.0f), Quaternion.identity);
-
                 newColorPicker.transform.SetParent(colorPalette, false);
                 newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
                 newColorPicker.AddComponent<PolygonCollider2D>();
                 newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
             }
-
-            if (i == 2)
+            else if (i == 2)
             {
                 // デフォルトのボタンをコピー
                 GameObject newColorPicker = Instantiate(colorPicker, new Vector3(18.0f, 0.0f, 0.0f), Quaternion.identity);
-
                 newColorPicker.transform.SetParent(colorPalette, false);
                 newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
                 newColorPicker.AddComponent<PolygonCollider2D>();
                 newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
             }
 
-            // newColorPicker.transform.SetParent(colorPalette, false);
-            // newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
-            // newColorPicker.AddComponent<PolygonCollider2D>();
-            // newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
         }
 
         // デフォルトのカラーボタンにカラーパレットの設定
