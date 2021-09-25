@@ -111,17 +111,6 @@ public class Test : MonoBehaviour
         }
     }
 
-
-    //高さ
-    public float xOffset;
-    //オブジェクト間の幅
-    public float yOffset;
-    //上から見て縦、Z軸のオブジェクトの量
-    public int row;
-    //上から見て横、X軸のオブジェクトの量
-    public int column;
-
-
     /// <summary>
     /// カラーパレットの作成
     /// </summary>
