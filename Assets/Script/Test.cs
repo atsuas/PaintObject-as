@@ -223,7 +223,7 @@ public class Test : MonoBehaviour
         // レイヤーをクローン
         GameObject layerClone = Instantiate(layer, transform.position, Quaternion.identity);
         layerClone.transform.SetParent(answerLayers);
-        layerClone.transform.position = layer.transform.position;
+        layerClone.transform.position = layer.transform.position;`¥
         layerClone.transform.localScale = new Vector3(1, 1, 1);
         layerClone.GetComponent<SpriteRenderer>().color = beforeColor;
         layerClone.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
@@ -258,5 +258,30 @@ public class Test : MonoBehaviour
 
         // セレクターを移動
         colorSelector.transform.DOMove(colorPicker.transform.position, .5f).SetEase(Ease.OutExpo);
+    }
+
+    /// <summary>
+    /// UIを表示
+    /// </summary>
+    void AppearUI()
+    {
+        // 完了ボタンを表示
+        doneButton.SetActive(true);
+
+        // 比較ボタンを表示
+        compareButton.SetActive(true);
+
+        // ヒントボタンを表示
+        hintButton.SetActive(true);
+
+        // 回答レイヤーのタッチ判定をオン
+        foreach (Transform layer in answerLayers.transform)
+        {
+            layer.gameObject.GetComponent<ObservableEventTrigger>().enabled = true;
+        }
+
+        // カラーパレットを表示
+        colorSelector.transform.gameObject.SetActive(true);
+        colorPalette.transform.gameObject.SetActive(true);
     }
 }

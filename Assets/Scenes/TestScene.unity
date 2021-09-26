@@ -1417,7 +1417,7 @@ MonoBehaviour:
   colorPalette: {fileID: 1116744116}
   colorPicker: {fileID: 423732922}
   colorSelector: {fileID: 1028933694}
-  mask: {fileID: 327857709}
+  mask: {fileID: 0}
   doneButton: {fileID: 1480740823}
   compareButton: {fileID: 0}
   hintButton: {fileID: 0}
