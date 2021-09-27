@@ -223,7 +223,7 @@ public class Test : MonoBehaviour
         // レイヤーをクローン
         GameObject layerClone = Instantiate(layer, transform.position, Quaternion.identity);
         layerClone.transform.SetParent(answerLayers);
-        layerClone.transform.position = layer.transform.position;`¥
+        layerClone.transform.position = layer.transform.position;
         layerClone.transform.localScale = new Vector3(1, 1, 1);
         layerClone.GetComponent<SpriteRenderer>().color = beforeColor;
         layerClone.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
