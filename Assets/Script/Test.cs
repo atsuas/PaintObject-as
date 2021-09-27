@@ -261,6 +261,30 @@ public class Test : MonoBehaviour
     }
 
     /// <summary>
+    /// UIを非表示
+    /// </summary>
+    void DisappearUI()
+    {
+        // 完了ボタンを非表示
+        doneButton.SetActive(false);
+
+        // 比較ボタンを非表示
+        compareButton.SetActive(false);
+
+        // ヒントボタンを非表示
+        hintButton.SetActive(false);
+
+        // 回答レイヤーのタッチ判定をオフ
+        foreach (Transform layer in answerLayers.transform)
+        {
+            if (layer.gameObject.GetComponent<ObservableEventTrigger>() != null)
+            {
+                layer.gameObject.GetComponent<ObservableEventTrigger>().enabled = false;
+            }
+        }
+    }
+
+    /// <summary>
     /// UIを表示
     /// </summary>
     void AppearUI()
