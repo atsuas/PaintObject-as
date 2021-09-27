@@ -282,6 +282,23 @@ public class Test : MonoBehaviour
                 layer.gameObject.GetComponent<ObservableEventTrigger>().enabled = false;
             }
         }
+
+        // カラーパレットを非表示
+        colorSelector.transform.gameObject.SetActive(false);
+        colorPalette.transform.gameObject.SetActive(false);
+
+        // ヒントアニメーションの停止
+        for (int i = 0; i < correctColors.Count; i++)
+        {
+            if (DOTween.TweensById(i) != null)
+            {
+                DOTween.TweensById(i).ForEach((tween) =>
+                {
+                    tween.Restart();
+                    tween.Pause();
+                });
+            }
+        }
     }
 
     /// <summary>
