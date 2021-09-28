@@ -69,6 +69,9 @@ public class Test : MonoBehaviour
 
         // カラーパレットの準備
         SetupColorPallet();
+
+        // 完了ボタンの準備
+        // SetupDoneButton();
     }
 
     ///<summary>
@@ -196,6 +199,20 @@ public class Test : MonoBehaviour
         SelectColor(colorPalette.GetChild(0).gameObject);
     }
 
+    /// <summary>
+    /// 完了ボタンの準備
+    /// </summary>
+    void SetupDoneButton()
+    {
+        // タッチ判定を追加
+        doneButton.AddComponent<PolygonCollider2D>();
+        doneButton.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => {
+            UniTask.Void(async () => {
+                await Finish();
+            });
+        }).AddTo(this);
+    }
+
     ///<summary>
     ///レイヤーのカラーを変更
     ///<summary>
@@ -209,6 +226,9 @@ public class Test : MonoBehaviour
 
         // カラー変更アニメーション
         ShowChangeColorAnimation(layer, touchPosition, beforeColor);
+
+        // SE再生
+        // ServiceLocator.Get<AVPlayerService>().Paint();
     }
 
     ///<summary>
@@ -325,4 +345,175 @@ public class Test : MonoBehaviour
         colorSelector.transform.gameObject.SetActive(true);
         colorPalette.transform.gameObject.SetActive(true);
     }
+
+    /// <summary>
+    /// スコアを計算
+    /// </summary>
+    public int CalcScore()
+    {
+        // 現在の回答のカラーリスト
+        List<Color> answerColors = new List<Color>();
+        foreach (Transform answerLayer in answerLayers.transform)
+        {
+            if (answerLayer.gameObject.GetComponent<SpriteRenderer>() != null)
+            {
+                answerColors.Add(answerLayer.gameObject.GetComponent<SpriteRenderer>().color);
+            }
+        }
+
+        // 正当数をカウント
+        int correctCount = 0;
+        for (int i = 0; i < correctColors.Count; i++)
+        {
+            string correctColor = ColorUtility.ToHtmlStringRGB(correctColors[i]);
+            string answerColor = ColorUtility.ToHtmlStringRGB(answerColors[i]);
+
+            if (correctColor == answerColor)
+            {
+                correctCount++;
+            }
+        }
+
+        // 正答率を計算
+        int score = 0;
+        if (correctCount != 0) 
+        {
+            score = (correctCount * 100) / correctColors.Count;
+        }
+
+        Debug.Log($"CalcScore: correctCount={correctCount} maxCorrectCount={correctColors.Count} score={score}");
+
+        return score;
+    }
+
+    /// <summary>
+    /// 終了
+    /// </summary>
+    async UniTask Finish()
+    {
+        // スコアを計算
+        int score = CalcScore();
+
+        // 結果を表示
+        await Result(score);
+
+        // 完了を判定
+        bool completed = score > 0 ? true : false;
+
+        // 終了を通知
+        OnFinish.OnNext(completed);
+    }
+
+    /// <summary>
+    /// 結果を表示
+    /// </summary>
+    public async UniTask Result(int score)
+    {
+        // UIを非表示
+        DisappearUI();
+
+        // 結果演出を再生
+        ShowScan();
+        ShowStar(score);
+        if (score > 0) ShowPaperShower();
+
+        // アニメーション終了を待つ
+        await UniTask.Delay(2500);
+    }
+
+    /// <summary>
+    /// スキャンアニメーションを再生
+    /// </summary>
+    void ShowScan()
+    {
+        // スキャン演出のエフェクトを生成
+        GameObject scanLight = Instantiate(scanLightPrefab, transform.position, Quaternion.identity);
+        scanLight.transform.SetParent(result, false);
+        scanLight.transform.localPosition = new Vector3(0f, -350f);
+
+        // 解答と正答の親を取得
+        Transform answerLayersParent = answerLayers.parent;
+        Transform correctLayersParent = correctLayers.parent;
+
+        // 比較配置に移動
+        Sequence layersSequence = DOTween.Sequence();
+        layersSequence
+            .Append(answerLayersParent.DOScale(90f, 0.5f))
+            .Join(answerLayersParent.DOLocalMove(new Vector3(250f, 50f), 0.5f))
+            .Join(correctLayersParent.DOScale(90f, 0.5f))
+            .Join(correctLayersParent.DOLocalMove(new Vector3(-250f, 50f), 0.5f));
+        layersSequence.Play();
+
+        // スキャンエフェクト
+        Sequence scanSequence = DOTween.Sequence();
+        scanSequence
+            .SetDelay(0.55f)
+            .AppendCallback(() => scanLight.SetActive(true))
+            .Append(scanLight.transform.DOLocalMove(new Vector3(0f, 350f), 1f))
+            .OnComplete(() => scanLight.SetActive(false));
+        scanSequence.Play();
+    }
+
+    /// <summary>
+    /// スター評価を表示
+    /// </summary>
+    void ShowStar(int score)
+    {
+        // スターのリストを作成
+        List<GameObject> starList = new List<GameObject>();
+        foreach (Transform star in starBox.transform)
+        {
+            starList.Add(star.gameObject);
+        }
+
+        // 正答率からスター数を決定
+        int starNum = 0;
+        if (0 < score & score < 50)
+        {
+            starNum = 1;
+        }
+        else if (50 <= score & score < 100)
+        {
+            starNum = 2;
+        }
+        else if (100 <= score)
+        {
+            starNum = 3;
+        }
+        
+        // スターの準備
+        Sequence starSequence = DOTween.Sequence().SetId("starSequence");
+        starSequence.AppendCallback(() => starBox.SetActive(true))
+            .SetDelay(1.5f)
+            .Join(starBox.transform.DOScale(0f, 0f))
+            .Append(starBox.transform.DOScale(1f, 0.3f));
+
+        // for (int i = 0; i < starNum; i++)
+        // {
+        //     starSequence.AppendCallback(() => ServiceLocator.Get<AVPlayerService>().Star())
+        //         .Append(starList[i].transform.DOScale(Vector3.one * 300f, 0f).SetDelay(0.05f)) // 星を大きくする
+        //         .Join(starList[i].GetComponent<SpriteRenderer>().DOColor(Color.white, 0f))     // 同時に色を明るくする
+        //         .Append(starList[i].transform.DOScale(100f, 0.3f).SetEase(Ease.OutBounce));    // 次にバウンドするように元の大きさに戻す
+        // }
+
+        // アニメーションを再生
+        starSequence.Play();
+    }
+
+    /// <summary>
+    /// 紙吹雪を出す
+    /// </summary>
+    void ShowPaperShower()
+    {
+        // 紙吹雪エフェクトを生成
+        GameObject paperShower = Instantiate(paperShowerPrefab, transform.position, Quaternion.identity);
+        paperShower.transform.SetParent(result, false);
+        paperShower.transform.localPosition = new Vector3(0f, 0f);
+
+        DOTween.TweensById("starSequence").ForEach((tween) => tween.OnComplete(() => { // 星のアニメーションの完了を取得
+            paperShower.GetComponent<ParticleSystem>().Play(); // 紙吹雪を出す
+            // ServiceLocator.Get<AVPlayerService>().Complete();
+        }));
+    }
+
 }
