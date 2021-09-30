@@ -248,7 +248,7 @@ Transform:
   m_GameObject: {fileID: 261608882}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.88, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0}
   m_Children: []
   m_Father: {fileID: 7608267872693321453}
   m_RootOrder: 1
@@ -2291,7 +2291,7 @@ MonoBehaviour:
   colorSelector: {fileID: 1028933694}
   mask: {fileID: 261608882}
   doneButton: {fileID: 1480740823}
-  compareButton: {fileID: 0}
+  compareButton: {fileID: 1480740823}
   hintButton: {fileID: 0}
   result: {fileID: 0}
   starBox: {fileID: 0}
@@ -2675,18 +2675,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1480740826}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1202752640}
-        m_MethodName: ClickDoneButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1480740826
 MonoBehaviour:
   m_ObjectHideFlags: 0

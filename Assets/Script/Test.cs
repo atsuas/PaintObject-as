@@ -281,6 +281,36 @@ public class Test : MonoBehaviour
     }
 
     /// <summary>
+    /// 比較
+    /// </summary>
+    void Compare()
+    {
+        // UIを非表示
+        DisappearUI();
+
+        // 解答と正答の親を取得
+        Transform answerLayersParent = answerLayers.parent;
+        Transform correctLayersParent = correctLayers.parent;
+
+        // 比較アニメーション
+        Sequence compareSequence = DOTween.Sequence();
+        compareSequence
+            .Append(answerLayersParent.DOScale(90f, 0.5f))
+            .Join(answerLayersParent.DOLocalMove(new Vector3(250f, 50f), 0.5f))
+            .Join(correctLayersParent.DOScale(90f, 0.5f))
+            .Join(correctLayersParent.DOLocalMove(new Vector3(-250f, 50f), 0.5f))
+            .AppendInterval(0.5f)
+            .SetLoops(2, LoopType.Yoyo); // 元に戻す
+
+        // アニメーション完了時
+        compareSequence.Play().OnComplete(() => 
+        {
+            // UIを戻す
+            AppearUI();
+        });
+    }
+
+    /// <summary>
     /// UIを非表示
     /// </summary>
     void DisappearUI()
@@ -292,7 +322,7 @@ public class Test : MonoBehaviour
         compareButton.SetActive(false);
 
         // ヒントボタンを非表示
-        hintButton.SetActive(false);
+        // hintButton.SetActive(false);
 
         // 回答レイヤーのタッチ判定をオフ
         foreach (Transform layer in answerLayers.transform)
@@ -333,7 +363,7 @@ public class Test : MonoBehaviour
         compareButton.SetActive(true);
 
         // ヒントボタンを表示
-        hintButton.SetActive(true);
+        // hintButton.SetActive(true);
 
         // 回答レイヤーのタッチ判定をオン
         foreach (Transform layer in answerLayers.transform)
@@ -415,7 +445,7 @@ public class Test : MonoBehaviour
         // 結果演出を再生
         ShowScan();
         ShowStar(score);
-        if (score > 0) ShowPaperShower();
+        // if (score > 0) ShowPaperShower();
 
         // アニメーション終了を待つ
         await UniTask.Delay(2500);
@@ -427,9 +457,9 @@ public class Test : MonoBehaviour
     void ShowScan()
     {
         // スキャン演出のエフェクトを生成
-        GameObject scanLight = Instantiate(scanLightPrefab, transform.position, Quaternion.identity);
-        scanLight.transform.SetParent(result, false);
-        scanLight.transform.localPosition = new Vector3(0f, -350f);
+        // GameObject scanLight = Instantiate(scanLightPrefab, transform.position, Quaternion.identity);
+        // scanLight.transform.SetParent(result, false);
+        // scanLight.transform.localPosition = new Vector3(0f, -350f);
 
         // 解答と正答の親を取得
         Transform answerLayersParent = answerLayers.parent;
@@ -445,13 +475,13 @@ public class Test : MonoBehaviour
         layersSequence.Play();
 
         // スキャンエフェクト
-        Sequence scanSequence = DOTween.Sequence();
-        scanSequence
-            .SetDelay(0.55f)
-            .AppendCallback(() => scanLight.SetActive(true))
-            .Append(scanLight.transform.DOLocalMove(new Vector3(0f, 350f), 1f))
-            .OnComplete(() => scanLight.SetActive(false));
-        scanSequence.Play();
+        // Sequence scanSequence = DOTween.Sequence();
+        // scanSequence
+        //     .SetDelay(0.55f)
+        //     .AppendCallback(() => scanLight.SetActive(true))
+        //     .Append(scanLight.transform.DOLocalMove(new Vector3(0f, 350f), 1f))
+        //     .OnComplete(() => scanLight.SetActive(false));
+        // scanSequence.Play();
     }
 
     /// <summary>
@@ -500,20 +530,20 @@ public class Test : MonoBehaviour
         starSequence.Play();
     }
 
-    /// <summary>
-    /// 紙吹雪を出す
-    /// </summary>
-    void ShowPaperShower()
-    {
-        // 紙吹雪エフェクトを生成
-        GameObject paperShower = Instantiate(paperShowerPrefab, transform.position, Quaternion.identity);
-        paperShower.transform.SetParent(result, false);
-        paperShower.transform.localPosition = new Vector3(0f, 0f);
+    // /// <summary>
+    // /// 紙吹雪を出す
+    // /// </summary>
+    // void ShowPaperShower()
+    // {
+    //     // 紙吹雪エフェクトを生成
+    //     GameObject paperShower = Instantiate(paperShowerPrefab, transform.position, Quaternion.identity);
+    //     paperShower.transform.SetParent(result, false);
+    //     paperShower.transform.localPosition = new Vector3(0f, 0f);
 
-        DOTween.TweensById("starSequence").ForEach((tween) => tween.OnComplete(() => { // 星のアニメーションの完了を取得
-            paperShower.GetComponent<ParticleSystem>().Play(); // 紙吹雪を出す
-            // ServiceLocator.Get<AVPlayerService>().Complete();
-        }));
-    }
+    //     DOTween.TweensById("starSequence").ForEach((tween) => tween.OnComplete(() => { // 星のアニメーションの完了を取得
+    //         paperShower.GetComponent<ParticleSystem>().Play(); // 紙吹雪を出す
+    //         ServiceLocator.Get<AVPlayerService>().Complete();
+    //     }));
+    // }
 
 }
