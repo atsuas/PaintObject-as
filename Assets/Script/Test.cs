@@ -104,7 +104,7 @@ public class Test : MonoBehaviour
         {
             // タッチ判定を追加
             layer.gameObject.AddComponent<PolygonCollider2D>();
-            layer.gameObject.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => ChangeColor(layer.gameObject, _.position)).AddTo(this);
+            layer.gameObject.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => Debug.Log (_.position));
 
             // 正解のカラーリストに追加
             correctColors.Add(layer.gameObject.GetComponent<SpriteRenderer>().color);
