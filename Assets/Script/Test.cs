@@ -71,7 +71,7 @@ public class Test : MonoBehaviour
         SetupColorPallet();
 
         // 完了ボタンの準備
-        // SetupDoneButton();
+        SetupDoneButton();
     }
 
     ///<summary>
