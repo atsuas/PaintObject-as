@@ -470,8 +470,8 @@ public class Test : MonoBehaviour
         layersSequence
             .Append(answerLayersParent.DOScale(90f, 0.5f))
             .Join(answerLayersParent.DOLocalMove(new Vector3(250f, 50f), 0.5f))
-            .Join(correctLayersParent.DOScale(90f, 0.5f))
-            .Join(correctLayersParent.DOLocalMove(new Vector3(-250f, 50f), 0.5f));
+            .Join(correctLayersParent.DOScale(1f, 0.5f))
+            .Join(correctLayersParent.DOLocalMove(new Vector3(-2.6f, 1.4f, 7.7f), 0.5f));
         layersSequence.Play();
 
         // スキャンエフェクト
