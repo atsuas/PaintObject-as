@@ -1,955 +1,568 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq; //Linp使用時
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
+using UniRx; //UniRx使用時
+using Cysharp.Threading.Tasks; //UniTask使用時
+using DG.Tweening;
+using UniRx.Triggers;
+// using App.Services;
+using UnityEngine.EventSystems;
 
 public class Test : MonoBehaviour
 {
-    public Image l1Image;
-    public Image l2Image;
+    // 公開フィールド
+    [SerializeField] Transform correctLayers = default;
+    [SerializeField] Transform correctFrame = default;
+    [SerializeField] Transform colorPalette = default;
+    [SerializeField] GameObject colorPicker = default;
+    [SerializeField] GameObject colorSelector = default;
+    [SerializeField] GameObject mask = default;
+    [SerializeField] GameObject doneButton = default;
+    [SerializeField] GameObject compareButton = default;
+    [SerializeField] GameObject hintButton = default;
+    [SerializeField] Transform result = default;
+    [SerializeField] GameObject starBox = default;
+    [SerializeField] GameObject scanLightPrefab = default;
+    [SerializeField] GameObject paperShowerPrefab = default;
 
-    float timeAmt = 0;
-    float time;
-    public bool GaugeFlg;//追加
+    // ステージのオブジェクト
+    Transform stage = default;
+    Transform answerLayers = default;
+    GameObject answerFrame = default;
+    GameObject avPlayer = default;
 
-    //カラー関連
-    [Header("カラー関連")]
-    public Color[] colorList;
-    public Color curColor;
-    public int colorCount;
+    // 選択カラー
+    Color selectedColor = default;
 
-    //セレクター表示
-    public GameObject[] Selectors;
+    // 正解のカラーリスト
+    List<Color> correctColors = new List<Color>();
 
-    //正当カラー
-    [Header("正当カラー")]
-    [SerializeField]
-    private GameObject[] yellowObj;
-    [SerializeField]
-    private GameObject[] blueObj;
-    [SerializeField]
-    private GameObject[] pinkObj;
-    [SerializeField]
-    private GameObject[] whiteObj;
-    [SerializeField]
-    private GameObject[] greenObj;
-    [SerializeField]
-    private GameObject[] redObj;
-    [SerializeField]
-    private GameObject[] blackObj;
+    // プライベートプロパティ
+    Subject<bool> OnFinish { get; } = new Subject<bool>();
 
-
-    //フレームのタグ設定用
-    [Header("フレームタグ設定")]
-    public GameObject[] ColorTag;
-
-    // public Animator l1Animation;
-    
-    void Start()
+    /// <summary>
+    /// 初期化時
+    /// </summary>
+    void Awake()
     {
-        //正当フレームのカラー設定
-        LegitimateFrame();
+        // タグでオブジェクトを検索
+        stage = GameObject.FindWithTag("Stage").transform;
 
-        l1Image = l1Image.GetComponent<Image>();
-        time = timeAmt;
+        // ステージを構成するオブジェクトを設定
+        answerFrame = stage.transform.Find("Answer/Frame").gameObject;
+        answerLayers = stage.transform.Find("Answer/Layers").transform;
     }
 
-    void Update()
+    ///<summary>
+    ///初回動作開始時
+    ///<summary>
+    void Start()
     {
-        //マウスポジション取得、クリックでカラーを変更
-        ClickChangeColor();
+        // 正当レイヤーの準備
+        SetupCorrectLayers();
 
-        if ((GaugeFlg) && time < 1)//変更
+        //回答レイヤーの準備
+        SetupAnswerLayers();
+
+        // カラーパレットの準備
+        SetupColorPallet();
+
+        // 完了ボタンの準備
+        SetupDoneButton();
+    }
+
+    ///<summary>
+    ///正答レイヤーの準備
+    ///<summary>
+    void SetupCorrectLayers()
+    {
+        // 正当例を作成
+        foreach (Transform layer in answerLayers)
         {
-            time += Time.deltaTime;
-            l1Image.fillAmount = time * 1;
+            // レイヤーをコピー
+            GameObject layerClone = Instantiate(layer.gameObject);
+            layerClone.transform.SetParent(correctLayers, false);
+            layerClone.GetComponent<SpriteRenderer>().sortingOrder = layerClone.GetComponent<SpriteRenderer>().sortingOrder - 1000;
         }
 
-        // if (Input.GetMouseButtonDown(0))//追加
-        // {
-        //     //追加
-        //     GaugeFlg = true;
-        // }
+        // フレームをコピー
+        GameObject frameClone = Instantiate(answerFrame);
+        frameClone.transform.SetParent(correctFrame, false);
+        frameClone.GetComponent<SpriteRenderer>().sortingOrder = frameClone.GetComponent<SpriteRenderer>().sortingOrder-1000;
+    }
 
-        // if (Input.GetMouseButton(0))
-        // {
-        //     image.fillAmount += Time.deltaTime;
-        // }
+    ///<summary>
+    ///回答レイヤーの準備
+    ///<summary>
+    void SetupAnswerLayers()
+    {
+        // レイヤーをセットアップ
+        foreach (Transform layer in answerLayers)
+        {
+            // タッチ判定を追加
+            layer.gameObject.AddComponent<PolygonCollider2D>();
+            layer.gameObject.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => ChangeColor(layer.gameObject, _.position)).AddTo(this);
 
+            // 正解のカラーリストに追加
+            correctColors.Add(layer.gameObject.GetComponent<SpriteRenderer>().color);
+
+            // レイヤーのカラーを初期化
+            layer.GetComponent<SpriteRenderer>().color = Color.white;
+        }
     }
 
     /// <summary>
-    /// スタート時〜DoneButton押下までの処理
+    /// カラーパレットの作成
     /// </summary>
-    
-    //正当フレームのカラー設定
-    public void LegitimateFrame()
+    void SetupColorPallet()
     {
-        //取得したオブジェクト達を配列に入れる
-        yellowObj = GameObject.FindGameObjectsWithTag("Yellow");
+        // 文字列型の使用カラーリスト
+        List<string> stageColors = new List<string>();
 
-        //配列の中身を１つずつ処理
-        //YellowObject用
-        foreach (GameObject obj in yellowObj)
+        // デフォルトのカラーを保持
+        Color defaultColor = colorPicker.GetComponent<SpriteRenderer>().color;
+
+        // 使用カラーをリストに追加
+        foreach (Color color in correctColors)
         {
-                //見付けたオブジェクトに付いているSpriteRendererを取得
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 245/255f; 
-                color.g = 194/255f; 
-                color.b = 73/255f; 
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
-        
-        //BlueObject用
-        blueObj = GameObject.FindGameObjectsWithTag("Blue");
-        foreach (GameObject obj in blueObj)
-        {
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 30/255f; 
-                color.g = 168/255f; 
-                color.b = 255/255f; 
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
-
-        //PinkObject用
-        pinkObj = GameObject.FindGameObjectsWithTag("Pink");
-        foreach (GameObject obj in pinkObj)
-        {
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 238/255f;
-                color.g = 64/255f;
-                color.b = 189/255f;
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
-
-        //WhiteObject用
-        whiteObj = GameObject.FindGameObjectsWithTag("White");
-        foreach (GameObject obj in whiteObj)
-        {
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 255/255f;
-                color.g = 255/255f;
-                color.b = 255/255f;
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
-
-        //GreenObject用
-        greenObj = GameObject.FindGameObjectsWithTag("Green");
-        foreach (GameObject obj in greenObj)
-        {
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 86/255f;
-                color.g = 195/255f;
-                color.b = 96/255f;
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
-
-        //RedObject用
-        redObj = GameObject.FindGameObjectsWithTag("Red");
-        foreach (GameObject obj in redObj)
-        {
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 255/255f;
-                color.g = 112/255f;
-                color.b = 112/255f;
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
-
-        //BlackObject用
-        blackObj = GameObject.FindGameObjectsWithTag("Black");
-        foreach (GameObject obj in blackObj)
-        {
-                Renderer renderer = obj.GetComponent<SpriteRenderer>();
-
-                Color color= renderer.material.color;
-                color.r = 96/255f;
-                color.g = 96/255f;
-                color.b = 96/255f;
-                color.a = 255/255f;
-                renderer.material.color = color;
-        }
-    }
-
-    //マウスポジション取得、クリックでカラーを変更
-    public void ClickChangeColor()
-    {
-        //culColorはcolorCountの色ですよ
-        curColor = colorList[colorCount];
-
-        //マウスポジション
-        Vector3 pos = Input.mousePosition;
-        pos.z = 11.0f;
-        var ray = Camera.main.ScreenToWorldPoint(pos);
-        RaycastHit2D hit = Physics2D.Raycast(ray, -Vector2.up);
-
-        //クリックしたらカラーを変更
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (hit.collider != null)
+            // デフォルトのカラーと同じでなければ追加
+            if (color != defaultColor)
             {
-                SpriteRenderer sp = hit.collider.gameObject.GetComponent<SpriteRenderer>();
-                Debug.Log(hit.collider.name);
-
-                //スプライトのカラーをColorListのColorCountの色にする
-                // sp.color = curColor;
-
-                // image.fillAmount += Time.deltaTime;
-
-                //クリックでカラーTagを設定
-                if (curColor == colorList[0])
-                {
-                    l1Image.GetComponent<Image>().color = colorList[0];
-                    // l1Image = l1Image.GetComponent<Image>();
-                    // time = timeAmt;
-                    
-                    // if ((GaugeFlg) && time < 1)
-                    // {
-                    //     for (float i = 0; i < 1; i++)
-                    //     {
-                    //         time += Time.deltaTime;
-                    //         l1Image.fillAmount = time * i;
-                    //     }
-                    // }
-                    GaugeFlg = true;
-                    
-                    // if (l1Image.fillAmount <= 1.0f)
-                    // {
-                    //     l1Image.fillAmount = 0.0f;
-                    //     while (l1Image.fillAmount < 1.0f)
-                    //     {
-                    //         ++l1Image.fillAmount;
-                    //     }
-                    // }
-                    
-                    // l1Image.fillAmount += i * Time.deltaTime;
-                    
-                    // if (second <= 8)
-                    // {
-                    //     // ゲージを毎秒0.125増やす
-                    //     l1Image.fillAmount += 0.125f * Time.deltaTime;
-            
-                    //     // 秒数をカウント
-                    //     second += Time.deltaTime;
-            
-                    // }
-                    // l1Animation.SetBool("L1Animation", false);
-                    // l1Animation.SetTrigger("L1Animation");
-
-                    // sp.color = l1Image.color;
-
-                    //ヒットしたコライダーのタグをYellowColorTagに変更
-                    hit.collider.tag = ColorTag[0].tag;
-                }
-                else if (curColor == colorList[1])
-                {
-                    l1Image.GetComponent<Image>().color = colorList[1];
-                    GaugeFlg = true;
-                    // l1Animation.SetTrigger("L1Animation");
-                    //Blue用
-                    hit.collider.tag = ColorTag[1].tag;
-                }
-                else if (curColor == colorList[2])
-                {
-                    l1Image.GetComponent<Image>().color = colorList[2];
-                    GaugeFlg = true;
-                    // l1Animation.SetTrigger("L1Animation");
-                    //Pink用
-                    hit.collider.tag = ColorTag[2].tag;
-                }
-                else if (curColor == colorList[3])
-                {
-                    l1Image.GetComponent<Image>().color = colorList[3];
-                    GaugeFlg = true;
-                    // l1Animation.SetTrigger("L1Animation");
-                    //White用
-                    hit.collider.tag = ColorTag[3].tag;
-                }
-
+                // 文字列でカラーリストに追加
+                string htmlColor = "#" + ColorUtility.ToHtmlStringRGB(color);
+                stageColors.Add(htmlColor);
             }
         }
+
+        // 使用カラーの重複を削除
+        stageColors = stageColors.Distinct().ToList();
+
+        // カラー型の使用カラーリストを作成
+        List<Color> palletColors = new List<Color>();
+        foreach (string htmlColor in stageColors)
+        {
+            Color color = default(Color);
+            if (ColorUtility.TryParseHtmlString(htmlColor, out color)) 
+            {
+                palletColors.Add(color);
+            }
+        }
+
+        // デフォルトのカラーボタンからカラーパレットを作成
+        for (int i = 0; i < palletColors.Count; i++)
+        {
+
+            if (i == 0)
+            {
+                // デフォルトのボタンをコピー
+                GameObject newColorPicker = Instantiate(colorPicker, transform.position, Quaternion.identity);
+                newColorPicker.transform.SetParent(colorPalette, false);
+                newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
+                newColorPicker.AddComponent<PolygonCollider2D>();
+                newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
+            }
+            else if (i == 1)
+            {
+                // デフォルトのボタンをコピー
+                GameObject newColorPicker = Instantiate(colorPicker, new Vector3(9.0f, 0.0f, 0.0f), Quaternion.identity);
+                newColorPicker.transform.SetParent(colorPalette, false);
+                newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
+                newColorPicker.AddComponent<PolygonCollider2D>();
+                newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
+            }
+            else if (i == 2)
+            {
+                // デフォルトのボタンをコピー
+                GameObject newColorPicker = Instantiate(colorPicker, new Vector3(18.0f, 0.0f, 0.0f), Quaternion.identity);
+                newColorPicker.transform.SetParent(colorPalette, false);
+                newColorPicker.GetComponent<SpriteRenderer>().color = palletColors[i];
+                newColorPicker.AddComponent<PolygonCollider2D>();
+                newColorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(newColorPicker)).AddTo(this);
+            }
+
+        }
+
+        // デフォルトのカラーボタンにカラーパレットの設定
+        colorPicker.AddComponent<PolygonCollider2D>();
+        colorPicker.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => SelectColor(colorPicker)).AddTo(this);
+
+        // デフォルトカラーをパレットの最後尾に変更
+        colorPicker.transform.SetAsLastSibling();
+
+        // キャンバスを強制更新
+        Canvas.ForceUpdateCanvases();
+
+        // 初期カラーを選択
+        SelectColor(colorPalette.GetChild(0).gameObject);
     }
 
-    //カラーボタンOnClick用の設定
-    public void paint(int colorCode)
+    /// <summary>
+    /// 完了ボタンの準備
+    /// </summary>
+    void SetupDoneButton()
     {
-        colorCount = colorCode;
-        if (colorCount == 0)
-        {
-            //カラーボタンを押下時にセレクター表示
-            Selectors[0].SetActive(true);
-            Selectors[1].SetActive(false);
-            Selectors[2].SetActive(false);
-            Selectors[3].SetActive(false);
-            Debug.Log("黄色だよ");
-        }
-        else if (colorCount == 1)
-        {
-            Selectors[0].SetActive(false);
-            Selectors[1].SetActive(true);
-            Selectors[2].SetActive(false);
-            Selectors[3].SetActive(false);
-            Debug.Log("青色だよ");
-        }
-        else if (colorCount == 2)
-        {
-            Selectors[0].SetActive(false);
-            Selectors[1].SetActive(false);
-            Selectors[2].SetActive(true);
-            Selectors[3].SetActive(false);
-            Debug.Log("ピンク色だよ");
-        }
-        else if (colorCount == 3)
-        {
-            Selectors[0].SetActive(false);
-            Selectors[1].SetActive(false);
-            Selectors[2].SetActive(false);
-            Selectors[3].SetActive(true);
-            Debug.Log("白色だよ");
-        }
+        // タッチ判定を追加
+        doneButton.AddComponent<PolygonCollider2D>();
+        doneButton.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => {
+            UniTask.Void(async () => {
+                await Finish();
+            });
+        }).AddTo(this);
     }
 
-/// <summary>
-/// DoneButton押下後
-/// </summary>
-
-    //DoneButton OnClick時
-    [Header("DoneButton、OnClick用")]
-    public GameObject doneButton;
-    public GameObject nextButton;
-    public GameObject retryButton;
-    public GameObject colorsButton;
-    public Animator leftAnimator;
-    public Animator rightAnimator;
-
-    //クリア判定用
-    [Header("クリア判定用")]
-    public GameObject[] frameObjects;
-    public GameObject[] clearObjects;
-    public GameObject grayStars;
-    public GameObject[] goldStars;
-    public Animator[] goldStarSet;
-
-
-    //DoneButton OnClick時の処理
-    public void ClickDoneButton()
+    ///<summary>
+    ///レイヤーのカラーを変更
+    ///<summary>
+    void ChangeColor(GameObject layer, Vector3 touchPosition)
     {
-        leftAnimator.SetBool("LeftAnimation", true);
-        rightAnimator.SetBool("RightAnimation", true);
+        // 前のカラーを保持
+        Color beforeColor = layer.GetComponent<SpriteRenderer>().color;
+
+        // カラーを変更
+        layer.GetComponent<SpriteRenderer>().color = selectedColor;
+
+        // カラー変更アニメーション
+        ShowChangeColorAnimation(layer, touchPosition, beforeColor);
+
+        // SE再生
+        // ServiceLocator.Get<AVPlayerService>().Paint();
+    }
+
+    ///<summary>
+    /// レイヤーのカラー変更アニメーション
+    ///<summary>
+    void ShowChangeColorAnimation(GameObject layer, Vector3 touchPosition, Color beforeColor)
+    {
+        // タップ位置を計算
+        float touchPositionX = (touchPosition.x / 10) - ((Screen.width / 10) / 2);
+        float touchPositionY = (touchPosition.y / 10) - ((Screen.height / 10) / 2);
+
+        // レイヤーをクローン
+        GameObject layerClone = Instantiate(layer, transform.position, Quaternion.identity);
+        layerClone.transform.SetParent(answerLayers);
+        layerClone.transform.position = layer.transform.position;
+        layerClone.transform.localScale = new Vector3(1, 1, 1);
+        layerClone.GetComponent<SpriteRenderer>().color = beforeColor;
+        layerClone.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
+        layerClone.GetComponent<SpriteRenderer>().sortingOrder = layer.GetComponent<SpriteRenderer>().sortingOrder + 1;
+
+        // マスクをクローン
+        GameObject maskClone = Instantiate(mask, transform.position, Quaternion.identity);
+        maskClone.transform.SetParent(answerLayers);
+        maskClone.transform.localScale = new Vector3(0.01f, 0.01f, 0); // 小さくしておく
+        maskClone.transform.position = new Vector3(touchPositionX, touchPositionY, 0);
+        maskClone.GetComponent<SpriteMask>().renderingLayerMask = layerClone.GetComponent<SpriteRenderer>().renderingLayerMask;
+
+        // アニメーション時間
+        float duration = 0.7f;
+
+        // スケールアニメーション
+        float scale = (layer.GetComponent<RectTransform>().sizeDelta.x / 100) * 2.0f; // レイヤーサイズの2倍
+        maskClone.transform.DOScale(scale, duration);
+
+        // レイヤーとマスクを削除
+        Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ => Destroy(layerClone));
+        Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ => Destroy(maskClone));
+    }
+
+    /// <summary>
+    /// カラーパレットの選択カラーを変更
+    /// </summary>
+    void SelectColor(GameObject colorPicker)
+    {
+        // 選択カラーを変更
+        selectedColor = colorPicker.GetComponent<SpriteRenderer>().color;
+
+        // セレクターを移動
+        colorSelector.transform.DOMove(colorPicker.transform.position, .5f).SetEase(Ease.OutExpo);
+    }
+
+    /// <summary>
+    /// 比較
+    /// </summary>
+    void Compare()
+    {
+        // UIを非表示
+        DisappearUI();
+
+        // 解答と正答の親を取得
+        Transform answerLayersParent = answerLayers.parent;
+        Transform correctLayersParent = correctLayers.parent;
+
+        // 比較アニメーション
+        Sequence compareSequence = DOTween.Sequence();
+        compareSequence
+            .Append(answerLayersParent.DOScale(90f, 0.5f))
+            .Join(answerLayersParent.DOLocalMove(new Vector3(250f, 50f), 0.5f))
+            .Join(correctLayersParent.DOScale(90f, 0.5f))
+            .Join(correctLayersParent.DOLocalMove(new Vector3(-250f, 50f), 0.5f))
+            .AppendInterval(0.5f)
+            .SetLoops(2, LoopType.Yoyo); // 元に戻す
+
+        // アニメーション完了時
+        compareSequence.Play().OnComplete(() => 
+        {
+            // UIを戻す
+            AppearUI();
+        });
+    }
+
+    /// <summary>
+    /// UIを非表示
+    /// </summary>
+    void DisappearUI()
+    {
+        // 完了ボタンを非表示
         doneButton.SetActive(false);
-        nextButton.SetActive(true);
-        retryButton.SetActive(true);
-        colorsButton.SetActive(false);
-        Invoke("SetGrayStars", 1.0f);
+
+        // 比較ボタンを非表示
+        compareButton.SetActive(false);
+
+        // ヒントボタンを非表示
+        // hintButton.SetActive(false);
+
+        // 回答レイヤーのタッチ判定をオフ
+        foreach (Transform layer in answerLayers.transform)
+        {
+            if (layer.gameObject.GetComponent<ObservableEventTrigger>() != null)
+            {
+                layer.gameObject.GetComponent<ObservableEventTrigger>().enabled = false;
+            }
+        }
+
+        // カラーパレットを非表示
+        colorSelector.transform.gameObject.SetActive(false);
+        colorPalette.transform.gameObject.SetActive(false);
+
+        // ヒントアニメーションの停止
+        // for (int i = 0; i < correctColors.Count; i++)
+        // {
+        //     if (DOTween.TweensById(i) != null)
+        //     {
+        //         DOTween.TweensById(i).ForEach((tween) =>
+        //         {
+        //             tween.Restart();
+        //             tween.Pause();
+        //         });
+        //     }
+        // }
+    }
+
+    /// <summary>
+    /// UIを表示
+    /// </summary>
+    void AppearUI()
+    {
+        // 完了ボタンを表示
+        doneButton.SetActive(true);
+
+        // 比較ボタンを表示
+        compareButton.SetActive(true);
+
+        // ヒントボタンを表示
+        // hintButton.SetActive(true);
+
+        // 回答レイヤーのタッチ判定をオン
+        foreach (Transform layer in answerLayers.transform)
+        {
+            layer.gameObject.GetComponent<ObservableEventTrigger>().enabled = true;
+        }
+
+        // カラーパレットを表示
+        colorSelector.transform.gameObject.SetActive(true);
+        colorPalette.transform.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// スコアを計算
+    /// </summary>
+    public int CalcScore()
+    {
+        // 現在の回答のカラーリスト
+        List<Color> answerColors = new List<Color>();
+        foreach (Transform answerLayer in answerLayers.transform)
+        {
+            if (answerLayer.gameObject.GetComponent<SpriteRenderer>() != null)
+            {
+                answerColors.Add(answerLayer.gameObject.GetComponent<SpriteRenderer>().color);
+            }
+        }
+
+        // 正当数をカウント
+        int correctCount = 0;
+        for (int i = 0; i < correctColors.Count; i++)
+        {
+            string correctColor = ColorUtility.ToHtmlStringRGB(correctColors[i]);
+            string answerColor = ColorUtility.ToHtmlStringRGB(answerColors[i]);
+
+            if (correctColor == answerColor)
+            {
+                correctCount++;
+            }
+        }
+
+        // 正答率を計算
+        int score = 0;
+        if (correctCount != 0) 
+        {
+            score = (correctCount * 100) / correctColors.Count;
+        }
+
+        Debug.Log($"CalcScore: correctCount={correctCount} maxCorrectCount={correctColors.Count} score={score}");
+
+        return score;
+    }
+
+    /// <summary>
+    /// 終了
+    /// </summary>
+    async UniTask Finish()
+    {
+        // スコアを計算
+        int score = CalcScore();
+
+        // 結果を表示
+        await Result(score);
+
+        // 完了を判定
+        bool completed = score > 0 ? true : false;
+
+        // 終了を通知
+        OnFinish.OnNext(completed);
+    }
+
+    /// <summary>
+    /// 結果を表示
+    /// </summary>
+    public async UniTask Result(int score)
+    {
+        // UIを非表示
+        DisappearUI();
+
+        // 結果演出を再生
+        ShowScan();
+        ShowStar(score);
+        // if (score > 0) ShowPaperShower();
+
+        // アニメーション終了を待つ
+        await UniTask.Delay(2500);
+    }
+
+    /// <summary>
+    /// スキャンアニメーションを再生
+    /// </summary>
+    void ShowScan()
+    {
+        // スキャン演出のエフェクトを生成
+        // GameObject scanLight = Instantiate(scanLightPrefab, transform.position, Quaternion.identity);
+        // scanLight.transform.SetParent(result, false);
+        // scanLight.transform.localPosition = new Vector3(0f, -350f);
+
+        // 解答と正答の親を取得
+        Transform answerLayersParent = answerLayers.parent;
+        Transform correctLayersParent = correctLayers.parent;
+
+        // 比較配置に移動
+        Sequence layersSequence = DOTween.Sequence();
+        layersSequence
+            .Append(answerLayersParent.DOScale(90f, 0.5f))
+            .Join(answerLayersParent.DOLocalMove(new Vector3(250f, 50f), 0.5f))
+            .Join(correctLayersParent.DOScale(1f, 0.5f))
+            .Join(correctLayersParent.DOLocalMove(new Vector3(-2.6f, 1.4f, 7.7f), 0.5f));
+        layersSequence.Play();
+
+        // スキャンエフェクト
+        // Sequence scanSequence = DOTween.Sequence();
+        // scanSequence
+        //     .SetDelay(0.55f)
+        //     .AppendCallback(() => scanLight.SetActive(true))
+        //     .Append(scanLight.transform.DOLocalMove(new Vector3(0f, 350f), 1f))
+        //     .OnComplete(() => scanLight.SetActive(false));
+        // scanSequence.Play();
+    }
+
+    /// <summary>
+    /// スター評価を表示
+    /// </summary>
+    void ShowStar(int score)
+    {
+        // スターのリストを作成
+        List<GameObject> starList = new List<GameObject>();
+        foreach (Transform star in starBox.transform)
+        {
+            starList.Add(star.gameObject);
+        }
+
+        // 正答率からスター数を決定
+        int starNum = 0;
+        if (0 < score & score < 50)
+        {
+            starNum = 1;
+        }
+        else if (50 <= score & score < 100)
+        {
+            starNum = 2;
+        }
+        else if (100 <= score)
+        {
+            starNum = 3;
+        }
         
-        if (SceneManager.GetActiveScene().name == "Level1")
+        // スターの準備
+        Sequence starSequence = DOTween.Sequence().SetId("starSequence");
+        starSequence.AppendCallback(() => starBox.SetActive(true))
+            .SetDelay(1.5f)
+            .Join(starBox.transform.DOScale(0f, 0f))
+            .Append(starBox.transform.DOScale(1f, 0.3f));
+
+        for (int i = 0; i < starNum; i++)
         {
-            //クリア条件分岐
-            Level1Clear();
-        }
-        else if (SceneManager.GetActiveScene().name == "Level2")
-        {
-            Level2Clear();
-        }
-        else if (SceneManager.GetActiveScene().name == "Level3")
-        {
-            Level3Clear();
-        }
-        else if (SceneManager.GetActiveScene().name == "Level4")
-        {
-            Level4Clear();
-        }
-        else if (SceneManager.GetActiveScene().name == "Level5")
-        {
-            Level5Clear();
-        }
-        else if (SceneManager.GetActiveScene().name == "Level6")
-        {
-            Level6Clear();
-        }
-        else if (SceneManager.GetActiveScene().name == "Level7")
-        {
-            Level7Clear();
-        }
-        else if (SceneManager.GetActiveScene().name == "Level8")
-        {
-            Level8Clear();
-        }
-        else if (SceneManager.GetActiveScene().name == "Level9")
-        {
-            Level9Clear();
-        }
-        else if (SceneManager.GetActiveScene().name == "Level10")
-        {
-            Level10Clear();
-        }
-        else if (SceneManager.GetActiveScene().name == "Level11")
-        {
-            Level11Clear();
+            if (starNum == 1)
+            {
+                // GameObject newColorPicker = Instantiate(colorPicker, new Vector3(9.0f, 0.0f, 0.0f), Quaternion.identity);
+                starSequence.AppendCallback(() => Debug.Log ("スター!!"))
+                .Append(starList[i].transform.DOScale(Vector3.one * 300f, 0f).SetDelay(0.05f)) // 星を大きくする
+                .Join(starList[i].GetComponent<SpriteRenderer>().DOColor(Color.white, 0f))     // 同時に色を明るくする
+                .Append(starList[i].transform.DOScale(100f, 0.3f).SetEase(Ease.OutBounce));    // 次にバウンドするように元の大きさに戻す
+            }
+            else if (starNum == 2)
+            {
+                starSequence.AppendCallback(() => Debug.Log ("スター!!2"))
+                .Append(starList[i].transform.DOScale(Vector3.one * 300f, 0f).SetDelay(0.05f)) // 星を大きくする
+                .Join(starList[i].GetComponent<SpriteRenderer>().DOColor(Color.white, 0f))     // 同時に色を明るくする
+                .Append(starList[i].transform.DOScale(100f, 0.3f).SetEase(Ease.OutBounce));    // 次にバウンドするように元の大きさに戻す
+            }
+            else if (starNum == 3)
+            {
+                starSequence.AppendCallback(() => Debug.Log ("スター!!3"))
+                .Append(starList[i].transform.DOScale(Vector3.one * 300f, 0f).SetDelay(0.05f)) // 星を大きくする
+                .Join(starList[i].GetComponent<SpriteRenderer>().DOColor(Color.white, 0f))     // 同時に色を明るくする
+                .Append(starList[i].transform.DOScale(100f, 0.3f).SetEase(Ease.OutBounce));    // 次にバウンドするように元の大きさに戻す
+            }
+            
         }
 
+        // アニメーションを再生
+        starSequence.Play();
     }
 
-    //RetryButton OnClick時の処理
-    public void ClickRetryButton()
-    {
-        if (SceneManager.GetActiveScene().name == "Level1")
-        {
-            SceneManager.LoadScene("Level1");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level2")
-        {
-            SceneManager.LoadScene("Level2");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level3")
-        {
-            SceneManager.LoadScene("Level3");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level4")
-        {
-            SceneManager.LoadScene("Level4");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level5")
-        {
-            SceneManager.LoadScene("Level5");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level6")
-        {
-            SceneManager.LoadScene("Level6");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level7")
-        {
-            SceneManager.LoadScene("Level7");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level8")
-        {
-            SceneManager.LoadScene("Level8");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level9")
-        {
-            SceneManager.LoadScene("Level9");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level10")
-        {
-            SceneManager.LoadScene("Level10");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level11")
-        {
-            SceneManager.LoadScene("Level11");
-        }
+    // /// <summary>
+    // /// 紙吹雪を出す
+    // /// </summary>
+    // void ShowPaperShower()
+    // {
+    //     // 紙吹雪エフェクトを生成
+    //     GameObject paperShower = Instantiate(paperShowerPrefab, transform.position, Quaternion.identity);
+    //     paperShower.transform.SetParent(result, false);
+    //     paperShower.transform.localPosition = new Vector3(0f, 0f);
 
-    }
-
-    //NextButton OnClick時の処理
-    public void ClickNextButton()
-    {
-        if (SceneManager.GetActiveScene().name == "Level1")
-        {
-            SceneManager.LoadScene("Level2");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level2")
-        {
-            SceneManager.LoadScene("Level3");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level3")
-        {
-            SceneManager.LoadScene("Level4");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level4")
-        {
-            SceneManager.LoadScene("Level5");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level5")
-        {
-            SceneManager.LoadScene("Level6");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level6")
-        {
-            SceneManager.LoadScene("Level7");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level7")
-        {
-            SceneManager.LoadScene("Level8");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level8")
-        {
-            SceneManager.LoadScene("Level9");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level9")
-        {
-            SceneManager.LoadScene("Level10");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level10")
-        {
-            SceneManager.LoadScene("Level11");
-        }
-        else if (SceneManager.GetActiveScene().name == "Level11")
-        {
-            SceneManager.LoadScene("Level1");
-        }
-
-    }
-
-    //Level1 クリア条件分岐
-    public void Level1Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
-            frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
-            frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
-            frameObjects[3].CompareTag("BlueColor") == clearObjects[3].CompareTag("Blue") &&
-            frameObjects[4].CompareTag("BlueColor") == clearObjects[4].CompareTag("Blue") &&
-            frameObjects[5].CompareTag("PinkColor") == clearObjects[5].CompareTag("Pink"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
-            frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
-            frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
-            frameObjects[5].CompareTag("PinkColor") == clearObjects[5].CompareTag("Pink"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
-            frameObjects[3].CompareTag("BlueColor") == clearObjects[3].CompareTag("Blue") &&
-            frameObjects[4].CompareTag("BlueColor") == clearObjects[4].CompareTag("Blue"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //Level2 クリア条件分岐
-    public void Level2Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
-            frameObjects[1].CompareTag("PinkColor") == clearObjects[1].CompareTag("Pink") &&
-            frameObjects[2].CompareTag("PinkColor") == clearObjects[2].CompareTag("Pink") &&
-            frameObjects[3].CompareTag("WhiteColor") == clearObjects[3].CompareTag("White") &&
-            frameObjects[4].CompareTag("BlueColor") == clearObjects[4].CompareTag("Blue"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
-            frameObjects[1].CompareTag("PinkColor") == clearObjects[1].CompareTag("Pink") &&
-            frameObjects[2].CompareTag("PinkColor") == clearObjects[2].CompareTag("Pink"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //Level3 クリア条件分岐
-    public void Level3Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("GreenColor") == clearObjects[0].CompareTag("Green") &&
-            frameObjects[1].CompareTag("RedColor") == clearObjects[1].CompareTag("Red") &&
-            frameObjects[2].CompareTag("BlackColor") == clearObjects[2].CompareTag("Black") &&
-            frameObjects[3].CompareTag("BlackColor") == clearObjects[3].CompareTag("Black") &&
-            frameObjects[4].CompareTag("BlackColor") == clearObjects[4].CompareTag("Black") &&
-            frameObjects[5].CompareTag("BlackColor") == clearObjects[5].CompareTag("Black") &&
-            frameObjects[6].CompareTag("BlackColor") == clearObjects[6].CompareTag("Black"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[0].CompareTag("GreenColor") == clearObjects[0].CompareTag("Green") &&
-            frameObjects[1].CompareTag("RedColor") == clearObjects[1].CompareTag("Red"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[1].CompareTag("RedColor") == clearObjects[1].CompareTag("Red"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //Level4 クリア条件分岐
-    public void Level4Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("WhiteColor") == clearObjects[0].CompareTag("White") &&
-            frameObjects[1].CompareTag("PinkColor") == clearObjects[1].CompareTag("Pink") &&
-            frameObjects[2].CompareTag("BlueColor") == clearObjects[2].CompareTag("Blue") &&
-            frameObjects[3].CompareTag("YellowColor") == clearObjects[3].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[1].CompareTag("PinkColor") == clearObjects[1].CompareTag("Pink") &&
-            frameObjects[3].CompareTag("YellowColor") == clearObjects[3].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[3].CompareTag("YellowColor") == clearObjects[3].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //Level5 クリア条件分岐
-    public void Level5Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("RedColor") == clearObjects[0].CompareTag("Red") &&
-            frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
-            frameObjects[2].CompareTag("YellowColor") == clearObjects[2].CompareTag("Yellow") &&
-            frameObjects[3].CompareTag("RedColor") == clearObjects[3].CompareTag("Red") &&
-            frameObjects[4].CompareTag("YellowColor") == clearObjects[4].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[0].CompareTag("RedColor") == clearObjects[0].CompareTag("Red") &&
-            frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
-            frameObjects[3].CompareTag("RedColor") == clearObjects[3].CompareTag("Red"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[0].CompareTag("RedColor") == clearObjects[0].CompareTag("Red") &&
-            frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //Level6 クリア条件分岐
-    public void Level6Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
-            frameObjects[1].CompareTag("YellowColor") == clearObjects[1].CompareTag("Yellow") &&
-            frameObjects[2].CompareTag("BlackColor") == clearObjects[2].CompareTag("Black") &&
-            frameObjects[3].CompareTag("BlackColor") == clearObjects[3].CompareTag("Black") &&
-            frameObjects[4].CompareTag("BlackColor") == clearObjects[4].CompareTag("Black") &&
-            frameObjects[5].CompareTag("BlackColor") == clearObjects[5].CompareTag("Black") &&
-            frameObjects[6].CompareTag("RedColor") == clearObjects[6].CompareTag("Red") &&
-            frameObjects[7].CompareTag("BlackColor") == clearObjects[7].CompareTag("Black") &&
-            frameObjects[8].CompareTag("WhiteColor") == clearObjects[8].CompareTag("White"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[0].CompareTag("YellowColor") == clearObjects[0].CompareTag("Yellow") &&
-            frameObjects[1].CompareTag("YellowColor") == clearObjects[1].CompareTag("Yellow") &&
-            frameObjects[2].CompareTag("BlackColor") == clearObjects[2].CompareTag("Black") &&
-            frameObjects[3].CompareTag("BlackColor") == clearObjects[3].CompareTag("Black") &&
-            frameObjects[4].CompareTag("BlackColor") == clearObjects[4].CompareTag("Black") &&
-            frameObjects[5].CompareTag("BlackColor") == clearObjects[5].CompareTag("Black"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[6].CompareTag("RedColor") == clearObjects[6].CompareTag("Red") &&
-            frameObjects[7].CompareTag("BlackColor") == clearObjects[7].CompareTag("Black"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //Level7 クリア条件分岐
-    public void Level7Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("BlackColor") == clearObjects[0].CompareTag("Black") &&
-            frameObjects[1].CompareTag("GreenColor") == clearObjects[1].CompareTag("Green") &&
-            frameObjects[2].CompareTag("GreenColor") == clearObjects[2].CompareTag("Green") &&
-            frameObjects[3].CompareTag("GreenColor") == clearObjects[3].CompareTag("Green") &&
-            frameObjects[4].CompareTag("WhiteColor") == clearObjects[4].CompareTag("White"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[0].CompareTag("BlackColor") == clearObjects[0].CompareTag("Black") &&
-            frameObjects[2].CompareTag("GreenColor") == clearObjects[2].CompareTag("Green") &&
-            frameObjects[3].CompareTag("GreenColor") == clearObjects[3].CompareTag("Green"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[2].CompareTag("GreenColor") == clearObjects[2].CompareTag("Green") &&
-            frameObjects[3].CompareTag("GreenColor") == clearObjects[3].CompareTag("Green"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //Level8 クリア条件分岐
-    public void Level8Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("RedColor") == clearObjects[0].CompareTag("Red") &&
-            frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
-            frameObjects[2].CompareTag("BlackColor") == clearObjects[2].CompareTag("Black") &&
-            frameObjects[3].CompareTag("YellowColor") == clearObjects[3].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[3].CompareTag("YellowColor") == clearObjects[3].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[0].CompareTag("RedColor") == clearObjects[0].CompareTag("Red"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //Level9 クリア条件分岐
-    public void Level9Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("RedColor") == clearObjects[0].CompareTag("Red") &&
-            frameObjects[1].CompareTag("BlackColor") == clearObjects[1].CompareTag("Black") &&
-            frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
-            frameObjects[3].CompareTag("YellowColor") == clearObjects[3].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[0].CompareTag("RedColor") == clearObjects[0].CompareTag("Red") &&
-            frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
-            frameObjects[3].CompareTag("YellowColor") == clearObjects[3].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[3].CompareTag("YellowColor") == clearObjects[3].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //Level10 クリア条件分岐
-    public void Level10Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("GreenColor") == clearObjects[0].CompareTag("Green") &&
-            frameObjects[1].CompareTag("RedColor") == clearObjects[1].CompareTag("Red") &&
-            frameObjects[2].CompareTag("YellowColor") == clearObjects[2].CompareTag("Yellow") &&
-            frameObjects[3].CompareTag("GreenColor") == clearObjects[3].CompareTag("Green"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[0].CompareTag("GreenColor") == clearObjects[0].CompareTag("Green") &&
-            frameObjects[2].CompareTag("YellowColor") == clearObjects[2].CompareTag("Yellow") &&
-            frameObjects[3].CompareTag("GreenColor") == clearObjects[3].CompareTag("Green"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[2].CompareTag("YellowColor") == clearObjects[2].CompareTag("Yellow"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //Level11 クリア条件分岐
-    public void Level11Clear()
-    {
-        //クリアの処理
-        if (frameObjects[0].CompareTag("BlackColor") == clearObjects[0].CompareTag("Black") &&
-            frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
-            frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
-            frameObjects[3].CompareTag("BlackColor") == clearObjects[3].CompareTag("Black") &&
-            frameObjects[4].CompareTag("RedColor") == clearObjects[4].CompareTag("Red") &&
-            frameObjects[5].CompareTag("RedColor") == clearObjects[5].CompareTag("Red"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Invoke("SetStar3", 3.0f);
-            Debug.Log("クリアだよ");
-        }
-        //星2の処理
-        else if (frameObjects[1].CompareTag("WhiteColor") == clearObjects[1].CompareTag("White") &&
-            frameObjects[2].CompareTag("WhiteColor") == clearObjects[2].CompareTag("White") &&
-            frameObjects[4].CompareTag("RedColor") == clearObjects[4].CompareTag("Red") &&
-            frameObjects[5].CompareTag("RedColor") == clearObjects[5].CompareTag("Red"))
-        {
-            Invoke("SetStar1", 2f);
-            Invoke("SetStar2", 2.5f);
-            Debug.Log("星２だよ");
-        }
-        //星1の処理
-        else if (frameObjects[4].CompareTag("RedColor") == clearObjects[4].CompareTag("Red") &&
-            frameObjects[5].CompareTag("RedColor") == clearObjects[5].CompareTag("Red"))
-        {
-            Invoke("SetStar1", 2f);
-            Debug.Log("星１だよ");
-        }
-        //星０の処理
-        else
-        {
-            Debug.Log("星０だよ");
-        }
-    }
-
-    //グレースターを表示する
-    public void SetGrayStars()
-    {
-        grayStars.SetActive(true);
-    }
-
-    //1つ目の星を表示
-    public void SetStar1()
-    {
-        goldStars[0].SetActive(true);
-        goldStarSet[0].SetBool("GoldStar1", true);
-    }
-
-    //2つ目の星を表示
-    public void SetStar2()
-    {
-        goldStars[1].SetActive(true);
-        goldStarSet[1].SetBool("GoldStar2", true);
-    }
-    //3つ目の星を表示
-    public void SetStar3()
-    {
-        goldStars[2].SetActive(true);
-        goldStarSet[2].SetBool("GoldStar3", true);
-    }
+    //     DOTween.TweensById("starSequence").ForEach((tween) => tween.OnComplete(() => { // 星のアニメーションの完了を取得
+    //         paperShower.GetComponent<ParticleSystem>().Play(); // 紙吹雪を出す
+    //         ServiceLocator.Get<AVPlayerService>().Complete();
+    //     }));
+    // }
 
 }

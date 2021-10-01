@@ -18,6 +18,7 @@ TagManager:
   - Green
   - Red
   - Black
+  - Stage
   layers:
   - Default
   - TransparentFX
@@ -27,8 +28,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - AnswerLayers
+  - Layer
   - 
   - 
   - 
