@@ -521,9 +521,9 @@ public class Test : MonoBehaviour
         for (int i = 0; i < starNum; i++)
         {
             starSequence.AppendCallback(() => Debug.Log ("スター!!"))
-            .Append(starList[i].transform.DOScale(Vector3.one * 300f, 0f).SetDelay(0.05f)) // 星を大きくする
-            .Join(starList[i].GetComponent<SpriteRenderer>().DOColor(Color.white, 0f))     // 同時に色を明るくする
-            .Append(starList[i].transform.DOScale(100f, 0.3f).SetEase(Ease.OutBounce));    // 次にバウンドするように元の大きさに戻す
+                .Append(starList[i].transform.DOScale(Vector3.one * 300f, 0f).SetDelay(0.05f)) // 星を大きくする
+                .Join(starList[i].GetComponent<SpriteRenderer>().DOColor(Color.white, 0f))     // 同時に色を明るくする
+                .Append(starList[i].transform.DOScale(100f, 0.3f).SetEase(Ease.OutBounce));    // 次にバウンドするように元の大きさに戻す
         }
 
         // アニメーションを再生
