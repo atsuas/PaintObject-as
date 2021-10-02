@@ -452,6 +452,8 @@ public class Test : MonoBehaviour
 
         // 終了を通知
         OnFinish.OnNext(completed);
+
+
     }
 
     /// <summary>
@@ -469,6 +471,9 @@ public class Test : MonoBehaviour
 
         // アニメーション終了を待つ
         await UniTask.Delay(2500);
+
+        //ネクストボタンを表示
+        SetupNextButton();
     }
 
     /// <summary>
@@ -571,6 +576,13 @@ public class Test : MonoBehaviour
     ///<summary>
     void SetupNextButton()
     {
+        // ネクストボタンの準備
+        Sequence nextSequence = DOTween.Sequence().SetId("nextSequence");
+        nextSequence.AppendCallback(() => nextButton.SetActive(true))
+            .SetDelay(1.5f)
+            .Join(nextButton.transform.DOScale(0f, 0f))
+            .Append(nextButton.transform.DOScale(1f, 0.3f));
+
         // タッチ判定を追加
         nextButton.AddComponent<PolygonCollider2D>();
         nextButton.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => {
@@ -585,16 +597,17 @@ public class Test : MonoBehaviour
     /// </summary>
     async UniTask NextLoadScene()
     {
-        // スコアを計算
-        int score = CalcScore();
+        Debug.Log("シーン!!");
+        // // スコアを計算
+        // int score = CalcScore();
 
-        // 結果を表示
-        await Result(score);
+        // // 結果を表示
+        // await Result(score);
 
-        // 完了を判定
-        bool completed = score > 0 ? true : false;
+        // // 完了を判定
+        // bool completed = score > 0 ? true : false;
 
-        // 終了を通知
-        OnFinish.OnNext(completed);
+        // // 終了を通知
+        // OnFinish.OnNext(completed);
     }
 }

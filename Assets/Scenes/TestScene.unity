@@ -2462,6 +2462,7 @@ MonoBehaviour:
   starBox: {fileID: 2108711101}
   scanLightPrefab: {fileID: 0}
   paperShowerPrefab: {fileID: 0}
+  nextButton: {fileID: 1888800851}
 --- !u!1 &1257450344
 GameObject:
   m_ObjectHideFlags: 0
