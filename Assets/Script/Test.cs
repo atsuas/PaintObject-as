@@ -567,16 +567,34 @@ public class Test : MonoBehaviour
     // }
 
     ///<summary>
-    ///次シーンの読み込み
+    ///次シーン読み込みボタンの準備
     ///<summary>
-    void NextButtonLoadScene()
+    void SetupNextButton()
     {
         // タッチ判定を追加
-        doneButton.AddComponent<PolygonCollider2D>();
-        doneButton.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => {
+        nextButton.AddComponent<PolygonCollider2D>();
+        nextButton.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => {
             UniTask.Void(async () => {
-                await Finish();
+                await NextLoadScene();
             });
         }).AddTo(this);
+    }
+
+    /// <summary>
+    /// 次シーンの読み込み
+    /// </summary>
+    async UniTask NextLoadScene()
+    {
+        // スコアを計算
+        int score = CalcScore();
+
+        // 結果を表示
+        await Result(score);
+
+        // 完了を判定
+        bool completed = score > 0 ? true : false;
+
+        // 終了を通知
+        OnFinish.OnNext(completed);
     }
 }
