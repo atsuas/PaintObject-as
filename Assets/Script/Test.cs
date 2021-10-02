@@ -72,6 +72,15 @@ public class Test : MonoBehaviour
 
         // 完了ボタンの準備
         SetupDoneButton();
+
+        // 比較ボタンの準備
+        // SetupCompareButton();
+
+        
+
+
+        // その他を準備
+        SetupOthers();
     }
 
     ///<summary>
@@ -211,6 +220,15 @@ public class Test : MonoBehaviour
                 await Finish();
             });
         }).AddTo(this);
+    }
+
+    /// <summary>
+    /// その他の準備
+    /// </summary>
+    void SetupOthers()
+    {
+        // スターを非表示
+        starBox.SetActive(false);
     }
 
     ///<summary>
