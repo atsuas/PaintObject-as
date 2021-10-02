@@ -10,6 +10,7 @@ using DG.Tweening;
 using UniRx.Triggers;
 // using App.Services;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class Test : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class Test : MonoBehaviour
     [SerializeField] GameObject starBox = default;
     [SerializeField] GameObject scanLightPrefab = default;
     [SerializeField] GameObject paperShowerPrefab = default;
+    [SerializeField] GameObject nextButton = default;
 
     // ステージのオブジェクト
     Transform stage = default;
@@ -76,7 +78,7 @@ public class Test : MonoBehaviour
         // 比較ボタンの準備
         // SetupCompareButton();
 
-        
+
 
 
         // その他を準備
@@ -564,4 +566,17 @@ public class Test : MonoBehaviour
     //     }));
     // }
 
+    ///<summary>
+    ///次シーンの読み込み
+    ///<summary>
+    void NextButtonLoadScene()
+    {
+        // タッチ判定を追加
+        doneButton.AddComponent<PolygonCollider2D>();
+        doneButton.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => {
+            UniTask.Void(async () => {
+                await Finish();
+            });
+        }).AddTo(this);
+    }
 }
