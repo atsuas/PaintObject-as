@@ -581,7 +581,7 @@ public class Test : MonoBehaviour
         nextSequence.AppendCallback(() => nextButton.SetActive(true))
             .SetDelay(1.5f)
             .Join(nextButton.transform.DOScale(0f, 0f))
-            .Append(nextButton.transform.DOScale(1f, 0.3f));
+            .Append(nextButton.transform.DOScale(2f, 0.3f));
 
         // タッチ判定を追加
         nextButton.AddComponent<PolygonCollider2D>();
