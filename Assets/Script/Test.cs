@@ -10,6 +10,7 @@ using DG.Tweening;
 using UniRx.Triggers;
 // using App.Services;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class Test : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class Test : MonoBehaviour
     [SerializeField] GameObject starBox = default;
     [SerializeField] GameObject scanLightPrefab = default;
     [SerializeField] GameObject paperShowerPrefab = default;
+    [SerializeField] GameObject nextButton = default;
+    [SerializeField] GameObject retryButton = default;
 
     // ステージのオブジェクト
     Transform stage = default;
@@ -72,6 +75,15 @@ public class Test : MonoBehaviour
 
         // 完了ボタンの準備
         SetupDoneButton();
+
+        // 比較ボタンの準備
+        // SetupCompareButton();
+
+
+
+
+        // その他を準備
+        SetupOthers();
     }
 
     ///<summary>
@@ -211,6 +223,15 @@ public class Test : MonoBehaviour
                 await Finish();
             });
         }).AddTo(this);
+    }
+
+    /// <summary>
+    /// その他の準備
+    /// </summary>
+    void SetupOthers()
+    {
+        // スターを非表示
+        starBox.SetActive(false);
     }
 
     ///<summary>
@@ -432,6 +453,8 @@ public class Test : MonoBehaviour
 
         // 終了を通知
         OnFinish.OnNext(completed);
+
+
     }
 
     /// <summary>
@@ -449,6 +472,10 @@ public class Test : MonoBehaviour
 
         // アニメーション終了を待つ
         await UniTask.Delay(2500);
+
+        //ネクストボタン,リトライボタンを表示
+        SetupNextButton();
+        SetupRetryButton();
     }
 
     /// <summary>
@@ -546,4 +573,85 @@ public class Test : MonoBehaviour
     //     }));
     // }
 
+    ///<summary>
+    ///次シーン読み込みボタンの準備
+    ///<summary>
+    void SetupNextButton()
+    {
+        // ネクストボタンの準備
+        Sequence nextSequence = DOTween.Sequence().SetId("nextSequence");
+        nextSequence.AppendCallback(() => nextButton.SetActive(true))
+            .SetDelay(0.5f)
+            .Join(nextButton.transform.DOScale(0f, 0f))
+            .Append(nextButton.transform.DOScale(2f, 0.3f));
+
+        // タッチ判定を追加
+        nextButton.AddComponent<PolygonCollider2D>();
+        nextButton.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => {
+            UniTask.Void(async () => {
+                await NextLoadScene();
+            });
+        }).AddTo(this);
+    }
+
+    /// <summary>
+    /// 次シーンの読み込み
+    /// </summary>
+    async UniTask NextLoadScene()
+    {
+        Debug.Log("ネクストシーン!!");
+
+        //ネクストシーンインデックスに＋１する
+        int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
+        // ＋１してシーンをロードする
+        if (SceneManager.GetActiveScene().buildIndex == 0 ||
+            SceneManager.GetActiveScene().buildIndex == 1 ||
+            SceneManager.GetActiveScene().buildIndex == 2 ||
+            SceneManager.GetActiveScene().buildIndex == 3 ||
+            SceneManager.GetActiveScene().buildIndex == 4 ||
+            SceneManager.GetActiveScene().buildIndex == 5 ||
+            SceneManager.GetActiveScene().buildIndex == 6 ||
+            SceneManager.GetActiveScene().buildIndex == 7 ||
+            SceneManager.GetActiveScene().buildIndex == 8 ||
+            SceneManager.GetActiveScene().buildIndex == 9 ||
+            SceneManager.GetActiveScene().buildIndex == 10
+            )
+        {
+            SceneManager.LoadScene(nextScene);
+        }
+    }
+
+    ///<summary>
+    ///リトライシーンボタンの準備
+    ///<summary>
+    void SetupRetryButton()
+    {
+        // リトライボタンの準備
+        Sequence retrySequence = DOTween.Sequence().SetId("retrySequence");
+        retrySequence.AppendCallback(() => retryButton.SetActive(true))
+            .SetDelay(0.5f)
+            .Join(retryButton.transform.DOScale(0f, 0f))
+            .Append(retryButton.transform.DOScale(2f, 0.3f));
+
+        // タッチ判定を追加
+        retryButton.AddComponent<PolygonCollider2D>();
+        retryButton.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => {
+            UniTask.Void(async () => {
+                await RetryLoadScene();
+            });
+        }).AddTo(this);
+    }
+
+    /// <summary>
+    /// 現シーンの読み込み
+    /// </summary>
+    async UniTask RetryLoadScene()
+    {
+        Debug.Log("リトライシーン!!");
+        
+        //現シーンのインデックス取得
+        int retryScene = SceneManager.GetActiveScene().buildIndex;
+        //現シーンをロードする
+        SceneManager.LoadScene(retryScene);
+    }
 }
