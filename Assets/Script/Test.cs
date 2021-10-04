@@ -29,6 +29,7 @@ public class Test : MonoBehaviour
     [SerializeField] GameObject scanLightPrefab = default;
     [SerializeField] GameObject paperShowerPrefab = default;
     [SerializeField] GameObject nextButton = default;
+    [SerializeField] GameObject retryButton = default;
 
     // ステージのオブジェクト
     Transform stage = default;
@@ -472,8 +473,9 @@ public class Test : MonoBehaviour
         // アニメーション終了を待つ
         await UniTask.Delay(2500);
 
-        //ネクストボタンを表示
+        //ネクストボタン,リトライボタンを表示
         SetupNextButton();
+        SetupRetryButton();
     }
 
     /// <summary>
@@ -597,7 +599,47 @@ public class Test : MonoBehaviour
     /// </summary>
     async UniTask NextLoadScene()
     {
-        Debug.Log("シーン!!");
+        Debug.Log("ネクストシーン!!");
+        // // スコアを計算
+        // int score = CalcScore();
+
+        // // 結果を表示
+        // await Result(score);
+
+        // // 完了を判定
+        // bool completed = score > 0 ? true : false;
+
+        // // 終了を通知
+        // OnFinish.OnNext(completed);
+    }
+
+    ///<summary>
+    ///リトライシーンボタンの準備
+    ///<summary>
+    void SetupRetryButton()
+    {
+        // リトライボタンの準備
+        Sequence retrySequence = DOTween.Sequence().SetId("retrySequence");
+        retrySequence.AppendCallback(() => retryButton.SetActive(true))
+            .SetDelay(1.5f)
+            .Join(retryButton.transform.DOScale(0f, 0f))
+            .Append(retryButton.transform.DOScale(2f, 0.3f));
+
+        // タッチ判定を追加
+        retryButton.AddComponent<PolygonCollider2D>();
+        retryButton.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => {
+            UniTask.Void(async () => {
+                await RetryLoadScene();
+            });
+        }).AddTo(this);
+    }
+
+    /// <summary>
+    /// 現シーンの読み込み
+    /// </summary>
+    async UniTask RetryLoadScene()
+    {
+        Debug.Log("リトライシーン!!");
         // // スコアを計算
         // int score = CalcScore();
 

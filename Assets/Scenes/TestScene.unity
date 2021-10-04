@@ -2463,6 +2463,7 @@ MonoBehaviour:
   scanLightPrefab: {fileID: 0}
   paperShowerPrefab: {fileID: 0}
   nextButton: {fileID: 1888800851}
+  retryButton: {fileID: 1257450344}
 --- !u!1 &1257450344
 GameObject:
   m_ObjectHideFlags: 0
@@ -2499,7 +2500,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -90, y: -381}
-  m_SizeDelta: {x: 100, y: 20}
+  m_SizeDelta: {x: 90, y: 33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1257450346
 MonoBehaviour:
