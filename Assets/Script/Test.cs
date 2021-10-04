@@ -581,7 +581,7 @@ public class Test : MonoBehaviour
         // ネクストボタンの準備
         Sequence nextSequence = DOTween.Sequence().SetId("nextSequence");
         nextSequence.AppendCallback(() => nextButton.SetActive(true))
-            .SetDelay(1.5f)
+            .SetDelay(0.5f)
             .Join(nextButton.transform.DOScale(0f, 0f))
             .Append(nextButton.transform.DOScale(2f, 0.3f));
 
@@ -621,7 +621,7 @@ public class Test : MonoBehaviour
         // リトライボタンの準備
         Sequence retrySequence = DOTween.Sequence().SetId("retrySequence");
         retrySequence.AppendCallback(() => retryButton.SetActive(true))
-            .SetDelay(1.5f)
+            .SetDelay(0.5f)
             .Join(retryButton.transform.DOScale(0f, 0f))
             .Append(retryButton.transform.DOScale(2f, 0.3f));
 
