@@ -603,9 +603,11 @@ public class Test : MonoBehaviour
 
         // Debug.Log(SceneManager.GetActiveScene().name);
 
+        Debug.Log(SceneManager.GetActiveScene().buildIndex);
+
         // LoadSceneNX();
 
-        await NextScene();
+        // await NextScene();
 
         // // スコアを計算
         // int score = CalcScore();
@@ -636,11 +638,11 @@ public class Test : MonoBehaviour
     /// </summary>
     public async UniTask NextScene()
     {
-        for(int i = 0; i < 1; ++i)
-        {
-            Scene scene = SceneManager.GetSceneAt(i);
-            Debug.LogFormat("scene{0} = {1}, name = {2}", i, scene.IsValid(), scene.name);
-        }
+        // for(int i = 0; i < 1; ++i)
+        // {
+        //     Scene scene = SceneManager.GetSceneAt(i);
+        //     Debug.LogFormat("scene{0} = {1}, name = {2}", i, scene.IsValid(), scene.name);
+        // }
 
         //
         // IndicateScene();
