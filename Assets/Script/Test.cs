@@ -601,66 +601,24 @@ public class Test : MonoBehaviour
     {
         Debug.Log("ネクストシーン!!");
 
-        // Debug.Log(SceneManager.GetActiveScene().name);
-
-        // int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
-
-        if (SceneManager.GetActiveScene().buildIndex == 0)
+        //ネクストシーンインデックスに＋１する
+        int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
+        // ＋１してシーンをロードする
+        if (SceneManager.GetActiveScene().buildIndex == 0 ||
+            SceneManager.GetActiveScene().buildIndex == 1 ||
+            SceneManager.GetActiveScene().buildIndex == 2 ||
+            SceneManager.GetActiveScene().buildIndex == 3 ||
+            SceneManager.GetActiveScene().buildIndex == 4 ||
+            SceneManager.GetActiveScene().buildIndex == 5 ||
+            SceneManager.GetActiveScene().buildIndex == 6 ||
+            SceneManager.GetActiveScene().buildIndex == 7 ||
+            SceneManager.GetActiveScene().buildIndex == 8 ||
+            SceneManager.GetActiveScene().buildIndex == 9 ||
+            SceneManager.GetActiveScene().buildIndex == 10
+            )
         {
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(nextScene);
         }
-
-        // Debug.Log(SceneManager.GetActiveScene().buildIndex);
-
-        // LoadSceneNX();
-
-        // await NextScene();
-
-        // // スコアを計算
-        // int score = CalcScore();
-
-        // // 結果を表示
-        // await Result(score);
-
-        // // 完了を判定
-        // bool completed = score > 0 ? true : false;
-
-        // // 終了を通知
-        // OnFinish.OnNext(completed);
-    }
-
-    // public IEnumerator LoadSceneNX()
-    // {
-    //     for(int i = 0; i < 1; ++i)
-    //     {
-    //         Scene scene = SceneManager.GetSceneAt(i);
-    //         Debug.LogFormat("scene{0} = {1}, name = {2}", i, scene.IsValid(), scene.name);
-    //     }
-
-    //     yield return null;
-    // }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public async UniTask NextScene()
-    {
-        // for(int i = 0; i < 1; ++i)
-        // {
-        //     Scene scene = SceneManager.GetSceneAt(i);
-        //     Debug.LogFormat("scene{0} = {1}, name = {2}", i, scene.IsValid(), scene.name);
-        // }
-
-        //
-        // IndicateScene();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    void IndicateScene()
-    {
-        // SceneManager.GetActiveScene().name;
     }
 
     ///<summary>
@@ -691,16 +649,9 @@ public class Test : MonoBehaviour
     {
         Debug.Log("リトライシーン!!");
         
-        // // スコアを計算
-        // int score = CalcScore();
-
-        // // 結果を表示
-        // await Result(score);
-
-        // // 完了を判定
-        // bool completed = score > 0 ? true : false;
-
-        // // 終了を通知
-        // OnFinish.OnNext(completed);
+        //現シーンのインデックス取得
+        int retryScene = SceneManager.GetActiveScene().buildIndex;
+        //現シーンをロードする
+        SceneManager.LoadScene(retryScene);
     }
 }
