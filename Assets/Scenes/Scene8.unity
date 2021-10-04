@@ -2641,7 +2641,7 @@ GameObject:
   - component: {fileID: 1443421154}
   - component: {fileID: 1443421153}
   m_Layer: 5
-  m_Name: Level1Text
+  m_Name: Level8Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2698,7 +2698,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Level 1
+  m_Text: Level 8
 --- !u!222 &1443421154
 CanvasRenderer:
   m_ObjectHideFlags: 0
