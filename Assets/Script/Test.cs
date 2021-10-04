@@ -603,7 +603,14 @@ public class Test : MonoBehaviour
 
         // Debug.Log(SceneManager.GetActiveScene().name);
 
-        Debug.Log(SceneManager.GetActiveScene().buildIndex);
+        // int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
+
+        if (SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            SceneManager.LoadScene(1);
+        }
+
+        // Debug.Log(SceneManager.GetActiveScene().buildIndex);
 
         // LoadSceneNX();
 
