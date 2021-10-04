@@ -600,6 +600,11 @@ public class Test : MonoBehaviour
     async UniTask NextLoadScene()
     {
         Debug.Log("ネクストシーン!!");
+
+        Debug.Log(SceneManager.GetActiveScene().name);
+
+        // await NextScene();
+
         // // スコアを計算
         // int score = CalcScore();
 
@@ -611,6 +616,23 @@ public class Test : MonoBehaviour
 
         // // 終了を通知
         // OnFinish.OnNext(completed);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public async UniTask NextScene()
+    {
+        //
+        // IndicateScene();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    void IndicateScene()
+    {
+        // SceneManager.GetActiveScene().name;
     }
 
     ///<summary>
@@ -640,6 +662,7 @@ public class Test : MonoBehaviour
     async UniTask RetryLoadScene()
     {
         Debug.Log("リトライシーン!!");
+        
         // // スコアを計算
         // int score = CalcScore();
 
