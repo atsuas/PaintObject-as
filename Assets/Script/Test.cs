@@ -530,20 +530,4 @@ public class Test : MonoBehaviour
         starSequence.Play();
     }
 
-    // /// <summary>
-    // /// 紙吹雪を出す
-    // /// </summary>
-    // void ShowPaperShower()
-    // {
-    //     // 紙吹雪エフェクトを生成
-    //     GameObject paperShower = Instantiate(paperShowerPrefab, transform.position, Quaternion.identity);
-    //     paperShower.transform.SetParent(result, false);
-    //     paperShower.transform.localPosition = new Vector3(0f, 0f);
-
-    //     DOTween.TweensById("starSequence").ForEach((tween) => tween.OnComplete(() => { // 星のアニメーションの完了を取得
-    //         paperShower.GetComponent<ParticleSystem>().Play(); // 紙吹雪を出す
-    //         ServiceLocator.Get<AVPlayerService>().Complete();
-    //     }));
-    // }
-
 }
