@@ -30,6 +30,7 @@ public class Test : MonoBehaviour
     [SerializeField] GameObject paperShowerPrefab = default;
     [SerializeField] GameObject nextButton = default;
     [SerializeField] GameObject retryButton = default;
+    [SerializeField] GameObject iconRetryButton = default;
 
     // ステージのオブジェクト
     Transform stage = default;
@@ -653,5 +654,39 @@ public class Test : MonoBehaviour
         int retryScene = SceneManager.GetActiveScene().buildIndex;
         //現シーンをロードする
         SceneManager.LoadScene(retryScene);
+    }
+
+    ///<summary>
+    ///アイコンリトライボタンの準備
+    ///<summary>
+    void SetupIconRetryButton()
+    {
+        // アイコンリトライボタンの準備
+        Sequence iconRetrySequence = DOTween.Sequence().SetId("iconRetrySequence");
+        iconRetrySequence.AppendCallback(() => iconRetryButton.SetActive(true))
+            .SetDelay(0.5f)
+            .Join(iconRetryButton.transform.DOScale(0f, 0f))
+            .Append(iconRetryButton.transform.DOScale(2f, 0.3f));
+
+        // タッチ判定を追加
+        iconRetryButton.AddComponent<PolygonCollider2D>();
+        iconRetryButton.AddComponent<ObservableEventTrigger>().OnPointerClickAsObservable().Subscribe(_ => {
+            UniTask.Void(async () => {
+                await IconRetryLoadScene();
+            });
+        }).AddTo(this);
+    }
+
+    /// <summary>
+    /// 現シーンの読み込み
+    /// </summary>
+    async UniTask IconRetryLoadScene()
+    {
+        Debug.Log("アイコンリトライシーン!!");
+        
+        //現シーンのインデックス取得
+        int iconRetryScene = SceneManager.GetActiveScene().buildIndex;
+        //現シーンをロードする
+        SceneManager.LoadScene(iconRetryScene);
     }
 }
