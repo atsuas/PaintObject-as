@@ -662,11 +662,11 @@ public class Test : MonoBehaviour
     void SetupIconRetryButton()
     {
         // アイコンリトライボタンの準備
-        Sequence iconRetrySequence = DOTween.Sequence().SetId("iconRetrySequence");
-        iconRetrySequence.AppendCallback(() => iconRetryButton.SetActive(true))
-            .SetDelay(0.5f)
-            .Join(iconRetryButton.transform.DOScale(0f, 0f))
-            .Append(iconRetryButton.transform.DOScale(2f, 0.3f));
+        // Sequence iconRetrySequence = DOTween.Sequence().SetId("iconRetrySequence");
+        // iconRetrySequence.AppendCallback(() => iconRetryButton.SetActive(true))
+        //     .SetDelay(0.5f)
+        //     .Join(iconRetryButton.transform.DOScale(0f, 0f))
+        //     .Append(iconRetryButton.transform.DOScale(2f, 0.3f));
 
         // タッチ判定を追加
         iconRetryButton.AddComponent<PolygonCollider2D>();
